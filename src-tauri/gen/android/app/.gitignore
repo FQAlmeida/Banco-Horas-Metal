@@ -1,0 +1,5 @@
+/src/main/java/banco/horas/metal/fqa/banco_horas_metal/generated
+/src/main/jniLibs/**/*.so
+/src/main/assets/tauri.conf.json
+/tauri.build.gradle.kts
+/proguard-tauri.pro
