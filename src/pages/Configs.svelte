@@ -7,8 +7,6 @@
     import CurrencyInput from "@canutin/svelte-currency-input";
 </script>
 
-<Navbar />
-
 <div class="container mx-auto px-4">
     <Label for="hour_start" class="mb-2">Hora Entrada</Label>
     <Input

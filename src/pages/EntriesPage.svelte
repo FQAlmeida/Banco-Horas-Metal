@@ -6,7 +6,6 @@
     import SaveCheckpoint from "../components/SaveCheckpoint.svelte";
 </script>
 
-<Navbar />
 <Summary />
 <HourTable />
 <CreateEntry />
