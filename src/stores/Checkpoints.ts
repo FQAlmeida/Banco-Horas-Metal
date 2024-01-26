@@ -24,7 +24,7 @@ const create_checkpoint_store = async () => {
         update,
         add_checkpoint: async (new_checkpoint: Checkpoint) => {
             const result: CheckpointDataTransfer = await invoke(
-                "insert_checkpoint", { checkpoint: new_checkpoint });
+                "insert_checkpoint", { checkpointData: new_checkpoint });
             const parsed_checkpoints: Checkpoint = {
                 id: result.id,
                 checkpoint: DateTime.fromISO(result.checkpoint),

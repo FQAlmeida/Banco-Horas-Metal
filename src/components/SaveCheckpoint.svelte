@@ -4,6 +4,7 @@
     import { ExclamationCircleOutline } from "flowbite-svelte-icons";
     import { checkpoints } from "../stores/Checkpoints";
     import type { Checkpoint } from "../models/Checkpoint";
+    import { entries } from "../stores/Entries";
     let modal_datetime_open = false;
     let datetime_str: string = DateTime.now().toFormat("yyyy-MM-dd'T'HH:mm");
 
@@ -19,8 +20,8 @@
 <Button
     class="mt-4"
     on:click={() => {
-        modal_datetime_open = false;
-        modal_open = true;
+        modal_datetime_open = true;
+        modal_open = false;
     }}
 >
     Finalizar Registros
@@ -57,8 +58,9 @@
             color="red"
             class="me-2 mt-2"
             on:click={async () => {
-                console.log(datetime);
-                return await checkpoints.add_checkpoint(checkpoint);
+                const result = await checkpoints.add_checkpoint(checkpoint);
+                await entries.reload();
+                return result;
             }}
         >
             Confirmar

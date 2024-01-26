@@ -53,6 +53,9 @@ const create_entries_store = async () => {
                 (entry) => entry.register != index ? entry : parsed_entry
             ).sort((a, b) => a.register - b.register));
         },
+        reload: async () => {
+            set(await load_entries_from_database());
+        }
     };
 };
 
