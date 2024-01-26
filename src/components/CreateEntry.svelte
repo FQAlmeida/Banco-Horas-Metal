@@ -97,7 +97,12 @@
                 ).toFixed(2)}
             </p>
         </div>
-        <Button color="red" class="me-2 mt-2" on:click={() => entries.add_entry(temp_entry)}>Confirmar</Button>
+        <Button
+            color="red"
+            class="me-2 mt-2"
+            on:click={async () => await entries.add_entry(temp_entry)}
+            >Confirmar</Button
+        >
         <Button color="alternative">Cancelar</Button>
     </div>
 </Modal>

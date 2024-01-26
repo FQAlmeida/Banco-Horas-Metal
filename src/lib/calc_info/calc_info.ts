@@ -2,10 +2,12 @@ import { DateTime, type WeekdayNumbers } from "luxon";
 import type { HourRange } from "../../models/Config";
 import type { Entry, EntryInfo } from "../../models/Entry";
 
-function get_entries_per_day(entry: Entry, hour_range: HourRange) {
+type ActiveEntry = Omit<Entry, "register">;
+
+function get_entries_per_day(entry: ActiveEntry, hour_range: HourRange) {
     const start = entry.started_at;
     const end = entry.exited_at;
-    let new_entry_early: Entry = entry;
+    let new_entry_early: ActiveEntry = entry;
     let info_next_days: Omit<EntryInfo, "valor_normal" | "valor_extra"> = {
         extra: { extra_100: 0, extra_50: 0 },
         normal: 0
@@ -17,7 +19,7 @@ function get_entries_per_day(entry: Entry, hour_range: HourRange) {
                 { year: start.year, month: start.month, day: start.day, hour: 23, minute: 59, second: 59 },
                 { zone: "America/Sao_Paulo" })
         };
-        const new_entry_late: Entry = {
+        const new_entry_late: ActiveEntry = {
             started_at: DateTime.fromObject(
                 { year: start.year, month: start.month, day: start.day, hour: 24, minute: 0, second: 0 },
                 { zone: "America/Sao_Paulo" }),
@@ -88,7 +90,8 @@ function get_entries_per_day(entry: Entry, hour_range: HourRange) {
     return info;
 }
 
-export function calculate_entry_info(entry: Entry, price_hour: number, hour_range: HourRange): EntryInfo {
+export function calculate_entry_info(
+    entry: ActiveEntry, price_hour: number, hour_range: HourRange): EntryInfo {
     const info = get_entries_per_day(entry, hour_range);
 
     const hours_normal = info.normal;

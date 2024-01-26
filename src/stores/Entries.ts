@@ -3,49 +3,47 @@ import type { Entry, EntryInfo } from "../models/Entry";
 import { derived, writable } from "svelte/store";
 import { calculate_entry_info } from "../lib/calc_info/calc_info";
 import { hour_range, price_hour } from "./Configs";
+import { invoke } from "@tauri-apps/api/core";
+
+type EntryDataTransfer = Omit<Entry, "started_at" | "exited_at"> & { started_at: string, exited_at: string; };
 
 const load_entries_from_database = async () => {
-    return await new Promise<Entry[]>(resolve => {
-        resolve(new Array(2)
-            .fill(0)
-            .map(() => {
-                return {
-                    started_at: DateTime.fromObject({ hour: 7 })
-                        .setZone("America/Sao_Paulo")
-                        .minus({
-                            weeks: 2,
-                            hours: Math.round(Math.random() * 4) - 1,
-                        }),
-                    exited_at: DateTime.fromObject({ hour: 17 })
-                        .setZone("America/Sao_Paulo")
-                        .minus({
-                            weeks: 2,
-                            hours: Math.round(Math.random() * 4) - 4,
-                        }),
-                };
-            }));
-    });
+    const entries: EntryDataTransfer[] = await invoke(
+        "get_entries", { enteredAt: DateTime.now().minus({ weeks: 3 }) });
+    return entries.sort((a, b) => a.register - b.register).map((entry) => ({
+        register: entry.register,
+        started_at: DateTime.fromISO(entry.started_at),
+        exited_at: DateTime.fromISO(entry.exited_at)
+    })) as Entry[];
 };
 const create_entries_store = async () => {
     const { subscribe, set, update } = writable<Entry[]>((
         await load_entries_from_database()
-    ).sort((a, b) => a.started_at.toMillis() - b.started_at.toMillis()));
+    ));
 
     return {
         subscribe,
         set,
         update,
-        add_entry: (new_entry: Entry) => {
+        add_entry: async (new_entry: Omit<Entry, "register">) => {
+            const result: EntryDataTransfer = await invoke("insert_entry", { entry: new_entry });
+            const parsed_entry: Entry = {
+                register: result.register,
+                started_at: DateTime.fromISO(result.started_at),
+                exited_at: DateTime.fromISO(result.exited_at)
+            };
             update((old_entries) => [
                 ...old_entries,
-                new_entry
+                parsed_entry
             ].sort((a, b) => a.started_at.toMillis() - b.started_at.toMillis()));
         },
-        remove_entry: (index: number) => {
-            update((old_entries) => old_entries.filter((_, i) => i != index));
+        remove_entry: async (index: number) => {
+            await invoke("delete_entry", { id: index });
+            update((old_entries) => old_entries.filter((e) => e.register != index));
         },
-        update_entry: (index: number, new_entry: Entry) => {
-            update((old_entries) => old_entries.map((entry, i) => i != index ? entry : new_entry));
+        update_entry: (index: number, new_entry: Omit<Entry, "register">) => {
+            update((old_entries) => old_entries.map(
+                (entry, i) => i != index ? entry : { register: 0, ...new_entry }));
         },
     };
 };

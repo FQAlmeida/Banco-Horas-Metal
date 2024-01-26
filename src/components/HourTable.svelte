@@ -54,7 +54,7 @@
                 <TableBodyCell>
                     <Button
                         on:click={() => {
-                            actual_entry_delete_index = i;
+                            actual_entry_delete_index = entry.register;
                             modal_delete_open = true;
                         }}><TrashBinSolid class="mx-auto w-3 h-3" /></Button
                     ></TableBodyCell
