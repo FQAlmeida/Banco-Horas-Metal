@@ -36,6 +36,19 @@ pub async fn insert_entry(entry: RegisterData) -> Result<register::Model, String
 }
 
 #[tauri::command]
+pub async fn update_entry(id: u32, entry: RegisterData) -> Result<register::Model, String> {
+    let connection = Database::connect("sqlite://data.db?mode=rwc").await;
+    if let Err(c) = connection {
+        return Err(c.to_string());
+    }
+    let result = update_register(&connection.unwrap(), id, entry).await;
+    if let Err(c) = result {
+        return Err(c.to_string());
+    }
+    Ok(result.unwrap())
+}
+
+#[tauri::command]
 pub async fn delete_entry(id: u32) -> Result<u64, String> {
     let connection = Database::connect("sqlite://data.db?mode=rwc").await;
     if let Err(c) = connection {
@@ -64,6 +77,22 @@ async fn insert_register(
         ..Default::default()
     };
     let result = register.save(connection).await?;
+    let model = result.try_into_model()?;
+    Ok(model)
+}
+
+async fn update_register(
+    connection: &DbConn,
+    register_id: u32,
+    register_data: RegisterData,
+) -> Result<register::Model> {
+    let register = register::ActiveModel {
+        register: Set(register_id),
+        started_at: Set(register_data.started_at),
+        exited_at: Set(register_data.exited_at),
+        ..Default::default()
+    };
+    let result = register.update(connection).await?;
     let model = result.try_into_model()?;
     Ok(model)
 }

@@ -6,7 +6,10 @@
     <div class="flex flex-row items-center justify-center gap-8 mx-auto">
         <div class="flex flex-col items-center justify-center">
             <dt class="mb-2 text-3xl md:text-4xl font-extrabold">
-                R$ {$summary.valor_normal.toFixed(2)}
+                {new Intl.NumberFormat("pt-BR", {
+                    style: "currency",
+                    currency: "BRL",
+                }).format($summary.valor_normal)}
             </dt>
             <dd class="font-light text-gray-500 dark:text-gray-400">
                 Valor Horas Normais
@@ -14,7 +17,10 @@
         </div>
         <div class="flex flex-col items-center justify-center">
             <dt class="mb-2 text-3xl md:text-4xl font-extrabold">
-                R$ {$summary.valor_extra.toFixed(2)}
+                {new Intl.NumberFormat("pt-BR", {
+                    style: "currency",
+                    currency: "BRL",
+                }).format($summary.valor_extra)}
             </dt>
             <dd class="font-light text-gray-500 dark:text-gray-400">
                 Valor Horas Extra
@@ -22,7 +28,10 @@
         </div>
         <div class="flex flex-col items-center justify-center">
             <dt class="mb-2 text-3xl md:text-4xl font-extrabold">
-                R$ {($summary.valor_normal + $summary.valor_extra).toFixed(2)}
+                {new Intl.NumberFormat("pt-BR", {
+                    style: "currency",
+                    currency: "BRL",
+                }).format($summary.valor_normal + $summary.valor_extra)}
             </dt>
             <dd class="font-light text-gray-500 dark:text-gray-400">
                 Valor Total

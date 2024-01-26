@@ -3,6 +3,7 @@
     import { calculate_entry_info } from "../lib/calc_info/calc_info";
     import {
         ExclamationCircleOutline,
+        PenSolid,
         TrashBinSolid,
     } from "flowbite-svelte-icons";
 
@@ -18,6 +19,7 @@
     } from "flowbite-svelte";
     import { hour_range, price_hour } from "../stores/Configs";
     import { entries } from "../stores/Entries";
+    import UpdateEntry from "./UpdateEntry.svelte";
 
     let openRow: number | undefined;
 
@@ -26,8 +28,11 @@
     };
 
     $: modal_delete_open = false;
+    $: modal_update_open = false;
+    $: modal_update_confirm_open = false;
 
     let actual_entry_delete_index: number = 0;
+    let actual_entry_update_index: number = 0;
 </script>
 
 <Table>
@@ -40,7 +45,7 @@
     <TableBody tableBodyClass="divide-y">
         {#each $entries as entry, i}
             <TableBodyRow on:click={() => toggleRow(i)}>
-                <TableBodyCell>{i + 1}</TableBodyCell>
+                <TableBodyCell>{i + 1} - {entry.register}</TableBodyCell>
                 <TableBodyCell
                     >{entry.started_at.toFormat(
                         "dd/MM/yyyy HH:mm",
@@ -54,11 +59,19 @@
                 <TableBodyCell>
                     <Button
                         on:click={() => {
+                            actual_entry_update_index = entry.register;
+                            modal_update_open = true;
+                        }}
+                        ><PenSolid class="mx-auto w-3 h-3" />
+                    </Button>
+                    <Button
+                        on:click={() => {
                             actual_entry_delete_index = entry.register;
                             modal_delete_open = true;
-                        }}><TrashBinSolid class="mx-auto w-3 h-3" /></Button
-                    ></TableBodyCell
-                >
+                        }}
+                        ><TrashBinSolid class="mx-auto w-3 h-3" />
+                    </Button>
+                </TableBodyCell>
             </TableBodyRow>
             {#if openRow === i}
                 <EntryDetail
@@ -89,3 +102,4 @@
         <Button color="alternative">Cancelar</Button>
     </div>
 </Modal>
+<UpdateEntry bind:modal_update_open entry_index={actual_entry_update_index} />

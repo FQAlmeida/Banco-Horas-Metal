@@ -10,6 +10,7 @@ use serde::{Deserialize, Serialize};
 #[sea_orm(table_name = "Checkpoints")]
 pub struct Model {
     #[sea_orm(primary_key)]
+    pub id: u32,
     pub checkpoint: DateTime<Utc>,
 }
 

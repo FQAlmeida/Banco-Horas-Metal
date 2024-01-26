@@ -1,3 +1,3 @@
-pub mod register;  
-pub mod configuration;
 pub mod checkpoint;
+pub mod configuration;
+pub mod register;

@@ -5,13 +5,10 @@ mod controllers;
 mod models;
 mod persistence;
 
-use controllers::register::{delete_entry, get_entries, insert_entry};
-
-// Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
-#[tauri::command]
-fn greet(name: &str) -> String {
-    format!("Hello, {}! You've been greeted from Rust!", name)
-}
+use controllers::checkpoint::{
+    delete_checkpoint, get_checkpoints, insert_checkpoint, update_checkpoint,
+};
+use controllers::register::{delete_entry, get_entries, insert_entry, update_entry};
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub async fn run() -> Result<()> {
@@ -23,7 +20,12 @@ pub async fn run() -> Result<()> {
         .invoke_handler(tauri::generate_handler![
             get_entries,
             insert_entry,
-            delete_entry
+            update_entry,
+            delete_entry,
+            get_checkpoints,
+            insert_checkpoint,
+            update_checkpoint,
+            delete_checkpoint
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

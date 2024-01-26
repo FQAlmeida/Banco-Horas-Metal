@@ -1,15 +1,16 @@
 import { DateTime } from "luxon";
 import type { Entry, EntryInfo } from "../models/Entry";
-import { derived, writable } from "svelte/store";
+import { derived, get, writable } from "svelte/store";
 import { calculate_entry_info } from "../lib/calc_info/calc_info";
 import { hour_range, price_hour } from "./Configs";
 import { invoke } from "@tauri-apps/api/core";
+import { last_checkpoint } from "./Checkpoints";
 
 type EntryDataTransfer = Omit<Entry, "started_at" | "exited_at"> & { started_at: string, exited_at: string; };
 
 const load_entries_from_database = async () => {
     const entries: EntryDataTransfer[] = await invoke(
-        "get_entries", { enteredAt: DateTime.now().minus({ weeks: 3 }) });
+        "get_entries", { enteredAt: get(last_checkpoint).checkpoint });
     return entries.sort((a, b) => a.register - b.register).map((entry) => ({
         register: entry.register,
         started_at: DateTime.fromISO(entry.started_at),
@@ -35,15 +36,22 @@ const create_entries_store = async () => {
             update((old_entries) => [
                 ...old_entries,
                 parsed_entry
-            ].sort((a, b) => a.started_at.toMillis() - b.started_at.toMillis()));
+            ].sort((a, b) => a.register - b.register));
         },
         remove_entry: async (index: number) => {
             await invoke("delete_entry", { id: index });
             update((old_entries) => old_entries.filter((e) => e.register != index));
         },
-        update_entry: (index: number, new_entry: Omit<Entry, "register">) => {
+        update_entry: async (index: number, new_entry: Omit<Entry, "register">) => {
+            const result: EntryDataTransfer = await invoke("update_entry", { id: index, entry: new_entry });
+            const parsed_entry: Entry = {
+                register: result.register,
+                started_at: DateTime.fromISO(result.started_at),
+                exited_at: DateTime.fromISO(result.exited_at)
+            };
             update((old_entries) => old_entries.map(
-                (entry, i) => i != index ? entry : { register: 0, ...new_entry }));
+                (entry) => entry.register != index ? entry : parsed_entry
+            ).sort((a, b) => a.register - b.register));
         },
     };
 };

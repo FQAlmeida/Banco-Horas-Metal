@@ -1,3 +1,4 @@
+use crate::models::checkpoint::Entity as Checkpoint;
 use crate::models::configuration::Entity as Configuration;
 use crate::models::register::Entity as Register;
 use anyhow::Result;
@@ -24,6 +25,16 @@ pub async fn setup_db(db: &DbConn) -> Result<()> {
     stmt_config_table.build(SqliteQueryBuilder);
 
     db.execute(db.get_database_backend().build(&stmt_config_table))
+        .await?;
+
+    let stmt_checkpoint_table = schema
+        .create_table_from_entity(Checkpoint)
+        .if_not_exists()
+        .to_owned();
+
+    stmt_checkpoint_table.build(SqliteQueryBuilder);
+
+    db.execute(db.get_database_backend().build(&stmt_checkpoint_table))
         .await?;
 
     Ok(())
