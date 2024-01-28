@@ -40,8 +40,8 @@ jobs:
       - name: install dependencies (macos only)
         if: matrix.platform == 'macos-latest'
         run: |
-          brew update
-          brew install -y sqlite3
+          brew upgrade
+          brew install sqlite3
 
       - name: install frontend dependencies
         run: npm install # change this to npm or pnpm depending on which one you use
