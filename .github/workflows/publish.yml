@@ -49,17 +49,17 @@ jobs:
       - name: Build (macos only)
         if: matrix.platform == 'macos-latest'
         run: |
-          npm run tauri build --target universal-apple-darwin
+          npm run tauri build --target=universal-apple-darwin
           
       - name: Build (ubuntu only)
         if: matrix.platform == 'ubuntu-latest'
         run: |
-          npm run tauri build --target x86_64-unknown-linux-gnu
+          npm run tauri build --target=x86_64-unknown-linux-gnu
           
       - name: Build (windows only)
         if: matrix.platform == 'windows-latest'
         run: |
-          npm run tauri build --target x86_64-pc-windows-msvc
+          npm run tauri build --target=x86_64-pc-windows-msvc
 
       # - uses: tauri-apps/tauri-action@v0
       #   env:
