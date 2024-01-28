@@ -27,6 +27,9 @@ jobs:
 
       - name: install Rust stable
         uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: "aarch64-linux-android, armv7-linux-androideabi, i686-linux-android, x86_64-linux-android, x86_64-pc-windows-msvc"
+          features: all
 
       - name: install dependencies (ubuntu only)
         if: matrix.platform == 'ubuntu-latest'
