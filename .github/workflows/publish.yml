@@ -57,10 +57,15 @@ jobs:
         with:
           java-version: 1.8
       - name: Set up NDK
+        id: setup-ndk
         if: matrix.platform == 'ubuntu-latest'
         uses: nttld/setup-ndk@v1
         with:
           ndk-version: r25c
+      - name: Set up NDK home environment variable
+        if: matrix.platform == 'ubuntu-latest'
+        run: |
+          echo "NDK_HOME=${{ steps.setup-ndk.outputs.ndk-path }}" >> $GITHUB_ENV
 
       - name: install dependencies (ubuntu only)
         if: matrix.platform == 'ubuntu-latest'
