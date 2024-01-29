@@ -32,7 +32,12 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
         with:
           targets: "aarch64-linux-android, armv7-linux-androideabi, i686-linux-android, x86_64-linux-android, x86_64-pc-windows-msvc, x86_64-apple-darwin, x86_64-apple-ios, x86_64-unknown-linux-gnu"
-          features: all
+          components: all
+      
+      - name: Set up our JDK environment
+        uses: actions/setup-java@v1.4.3
+        with:
+          java-version: 1.8
 
       - name: install dependencies (ubuntu only)
         if: matrix.platform == 'ubuntu-latest'
@@ -58,10 +63,10 @@ jobs:
         uses: softprops/action-gh-release@v1
         if: matrix.platform == 'macos-latest'
         with:
-          tag_name: "Release_${{ steps.package_version.version }}"
+          tag_name: Release_${{ steps.package_version.version }}
           files: |
-            "${{ github.workspace }}/src-tauri/target/release/bundle/macos/banco-horas-metal.app"
-            "${{ github.workspace }}/src-tauri/target/release/bundle/dmg/banco-horas-metal_0.0.0_x64.dmg"
+            ${{ github.workspace }}/src-tauri/target/release/bundle/macos/banco-horas-metal.app
+            ${{ github.workspace }}/src-tauri/target/release/bundle/dmg/banco-horas-metal_0.0.0_x64.dmg
             
       - name: Build (ubuntu only)
         if: matrix.platform == 'ubuntu-latest'
@@ -71,11 +76,11 @@ jobs:
         uses: softprops/action-gh-release@v1
         if: matrix.platform == 'ubuntu-latest'
         with:
-          tag_name: "Release_${{ steps.package_version.version }}"
+          tag_name: Release_${{ steps.package_version.version }}
           files: |
-            "${{ github.workspace }}/src-tauri/target/release/bundle/deb/banco-horas-metal_0.0.0_amd64.deb"
-            "${{ github.workspace }}/src-tauri/target/release/bundle/rpm/banco-horas-metal-0.0.0-1.x86_64.rpm"
-            "${{ github.workspace }}/src-tauri/target/release/bundle/appimage/banco-horas-metal_0.0.0_amd64.AppImage"
+            ${{ github.workspace }}/src-tauri/target/release/bundle/deb/banco-horas-metal_0.0.0_amd64.deb
+            ${{ github.workspace }}/src-tauri/target/release/bundle/rpm/banco-horas-metal-0.0.0-1.x86_64.rpm
+            ${{ github.workspace }}/src-tauri/target/release/bundle/appimage/banco-horas-metal_0.0.0_amd64.AppImage
           
       - name: Build (windows only)
         if: matrix.platform == 'windows-latest'
@@ -85,10 +90,10 @@ jobs:
         uses: softprops/action-gh-release@v1
         if: matrix.platform == 'windows-latest'
         with:
-          tag_name: "Release_${{ steps.package_version.version }}"
+          tag_name: Release_${{ steps.package_version.version }}
           files: |
-            "${{ github.workspace }}\src-tauri\target\release\bundle\msi\banco-horas-metal_0.0.0_x64_en-US.msi"
-            "${{ github.workspace }}\src-tauri\target\release\bundle\nsis\banco-horas-metal_0.0.0_x64-setup.exe"
+            ${{ github.workspace }}\src-tauri\target\release\bundle\msi\banco-horas-metal_0.0.0_x64_en-US.msi
+            ${{ github.workspace }}\src-tauri\target\release\bundle\nsis\banco-horas-metal_0.0.0_x64-setup.exe
           
       # - uses: tauri-apps/tauri-action@v0
       #   env:
