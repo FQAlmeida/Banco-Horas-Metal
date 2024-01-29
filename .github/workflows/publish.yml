@@ -55,13 +55,14 @@ jobs:
         if: matrix.platform == 'ubuntu-latest'
         uses: actions/setup-java@v4
         with:
-          java-version: 18
-          distribution: 'oracle'
+          java-version: 17
+          distribution: 'temurin'
           cache: 'gradle'
 
-      - name: Change wrapper permissions
-        if: matrix.platform == 'ubuntu-latest'
-        run: chmod +x gradlew
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+        with:
+          packages: 'tools platform-tools ndk build-tools command-line-tools'
 
       - name: Set up NDK
         id: setup-ndk
