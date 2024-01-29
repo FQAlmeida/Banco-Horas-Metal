@@ -63,12 +63,12 @@ jobs:
         if: matrix.platform == 'ubuntu-latest'
         uses: android-actions/setup-android@v3
         with:
-          packages: 'tools platform-tools command-line-tools plataforms'
+          packages: 'tools platform-tools cmdline-tools plataforms'
       - name: Install NDK
         if: matrix.platform == 'ubuntu-latest'
         run: |
           sdkmanager "ndk;25.0.8775105"
-          sdkmanager "build-tools"
+          sdkmanager "build-tools;34.0.0"
       - name: Set up NDK home environment variable
         if: matrix.platform == 'ubuntu-latest'
         run: |
