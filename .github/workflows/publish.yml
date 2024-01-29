@@ -25,9 +25,15 @@ jobs:
         with:
           node-version: 20
 
-      - name: Extract version
-        id: extract_version
+      - name: Extract node version
+        id: extract_node_version
         uses: Saionaro/extract-package-version@v1.2.1
+
+      - name: Get current rust app version from its Cargo.toml.
+        id: extract_rust_version
+        uses: dante-signal31/rust-app-version@v1.2.0
+        with:
+         cargo_toml_folder: src-tauri/
       
       - name: install Rust stable
         uses: dtolnay/rust-toolchain@stable
@@ -64,10 +70,10 @@ jobs:
         uses: softprops/action-gh-release@v1
         if: matrix.platform == 'macos-latest'
         with:
-          tag_name: Release_${{ steps.extract_version.outputs.version }}
+          tag_name: Release_${{ steps.extract_node_version.outputs.version }}
           files: |
             /Users/runner/work/Banco-Horas-Metal/Banco-Horas-Metal/src-tauri/target/release/bundle/macos/banco-horas-metal.app
-            /Users/runner/work/Banco-Horas-Metal/Banco-Horas-Metal/src-tauri/target/release/bundle/dmg/banco-horas-metal_0.0.0_x64.dmg
+            /Users/runner/work/Banco-Horas-Metal/Banco-Horas-Metal/src-tauri/target/release/bundle/dmg/banco-horas-metal_${{ steps.extract_rust_version.outputs.app_version }}_x64.dmg
             
       - name: Build (ubuntu only)
         if: matrix.platform == 'ubuntu-latest'
@@ -77,11 +83,11 @@ jobs:
         uses: softprops/action-gh-release@v1
         if: matrix.platform == 'ubuntu-latest'
         with:
-          tag_name: Release_${{ steps.extract_version.outputs.version }}
+          tag_name: Release_${{ steps.extract_node_version.outputs.version }}
           files: |
-            /home/runner/work/Banco-Horas-Metal/Banco-Horas-Metal/src-tauri/target/release/bundle/deb/banco-horas-metal_0.0.0_amd64.deb
-            /home/runner/work/Banco-Horas-Metal/Banco-Horas-Metal/src-tauri/target/release/bundle/rpm/banco-horas-metal-0.0.0-1.x86_64.rpm
-            /home/runner/work/Banco-Horas-Metal/Banco-Horas-Metal/src-tauri/target/release/bundle/appimage/banco-horas-metal_0.0.0_amd64.AppImage
+            /home/runner/work/Banco-Horas-Metal/Banco-Horas-Metal/src-tauri/target/release/bundle/deb/banco-horas-metal_${{ steps.extract_rust_version.outputs.app_version }}_amd64.deb
+            /home/runner/work/Banco-Horas-Metal/Banco-Horas-Metal/src-tauri/target/release/bundle/rpm/banco-horas-metal-${{ steps.extract_rust_version.outputs.app_version }}-1.x86_64.rpm
+            /home/runner/work/Banco-Horas-Metal/Banco-Horas-Metal/src-tauri/target/release/bundle/appimage/banco-horas-metal_${{ steps.extract_rust_version.outputs.app_version }}_amd64.AppImage
           
       - name: Build (windows only)
         if: matrix.platform == 'windows-latest'
@@ -91,10 +97,10 @@ jobs:
         uses: softprops/action-gh-release@v1
         if: matrix.platform == 'windows-latest'
         with:
-          tag_name: Release_${{ steps.extract_version.outputs.version }}
+          tag_name: Release_${{ steps.extract_node_version.outputs.version }}
           files: |
-            D:/a/Banco-Horas-Metal/Banco-Horas-Metal/src-tauri/target/release/bundle/msi/banco-horas-metal_0.0.0_x64_en-US.msi
-            D:/a/Banco-Horas-Metal/Banco-Horas-Metal/src-tauri/target/release/bundle/nsis/banco-horas-metal_0.0.0_x64-setup.exe
+            D:/a/Banco-Horas-Metal/Banco-Horas-Metal/src-tauri/target/release/bundle/msi/banco-horas-metal_${{ steps.extract_rust_version.outputs.app_version }}_x64_en-US.msi
+            D:/a/Banco-Horas-Metal/Banco-Horas-Metal/src-tauri/target/release/bundle/nsis/banco-horas-metal_${{ steps.extract_rust_version.outputs.app_version }}_x64-setup.exe
           
       # - uses: tauri-apps/tauri-action@v0
       #   env:
