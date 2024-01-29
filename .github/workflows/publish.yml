@@ -24,6 +24,9 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
+      - name: get-npm-version
+        id: package-version
+        uses: martinbeentjes/npm-get-version-action@v1.3.1
 
       - name: install Rust stable
         uses: dtolnay/rust-toolchain@stable
@@ -55,9 +58,11 @@ jobs:
         uses: softprops/action-gh-release@v1
         if: matrix.platform == 'macos-latest'
         with:
+          tag_nam: "Release_${{ steps.package-version.outputs.current-version}}"
           files: |
             "$GITHUB_WORKSPACE/src-tauri/target/release/bundle/macos/banco-horas-metal.app"
             "$GITHUB_WORKSPACE/src-tauri/target/release/bundle/dmg/banco-horas-metal_0.0.0_x64.dmg"
+            
       - name: Build (ubuntu only)
         if: matrix.platform == 'ubuntu-latest'
         run: |
@@ -66,6 +71,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         if: matrix.platform == 'macos-latest'
         with:
+          tag_nam: "Release_${{ steps.package-version.outputs.current-version}}"
           files: |
             "$GITHUB_WORKSPACE/src-tauri/target/release/bundle/deb/banco-horas-metal_0.0.0_amd64.deb"
             "$GITHUB_WORKSPACE/src-tauri/target/release/bundle/rpm/banco-horas-metal-0.0.0-1.x86_64.rpm"
@@ -79,6 +85,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         if: matrix.platform == 'macos-latest'
         with:
+          tag_nam: "Release_${{ steps.package-version.outputs.current-version}}"
           files: |
             "$GITHUB_WORKSPACE\src-tauri\target\release\bundle\msi\banco-horas-metal_0.0.0_x64_en-US.msi"
             "$GITHUB_WORKSPACE\src-tauri\target\release\bundle\nsis\banco-horas-metal_0.0.0_x64-setup.exe"
