@@ -80,6 +80,8 @@ jobs:
         if: matrix.platform == 'ubuntu-latest'
         run: |
           npm run tauri build --target=x86_64-unknown-linux-gnu
+          npm run tauri android build
+
       - name: Create Release (ubuntu only)
         uses: softprops/action-gh-release@v1
         if: matrix.platform == 'ubuntu-latest'
