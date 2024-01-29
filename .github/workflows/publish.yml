@@ -74,10 +74,12 @@ jobs:
       - name: Set up Android home environment variable
         if: matrix.platform == 'ubuntu-latest'
         run: echo "ANDROID_HOME=$HOME/.android/sdk" >> $GITHUB_ENV
+      - run: export ANDROID_HOME=$HOME/.android/sdk
         
       - name: Set up NDK home environment variable
         if: matrix.platform == 'ubuntu-latest'
         run: echo "NDK_HOME=$ANDROID_HOME/ndk/25.0.8775105" >> $GITHUB_ENV
+      - run: export NDk_HOME=$ANDROID_HOME/ndk/25.0.8775105
 
       - name: Install dependencies (ubuntu only)
         if: matrix.platform == 'ubuntu-latest'
