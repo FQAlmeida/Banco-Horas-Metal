@@ -61,7 +61,7 @@ jobs:
 
       - name: Change wrapper permissions
         if: matrix.platform == 'ubuntu-latest'
-        run: chmod +x ./gradlew
+        run: chmod +x gradlew
 
       - name: Set up NDK
         id: setup-ndk
