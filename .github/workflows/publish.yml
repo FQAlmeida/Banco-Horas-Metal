@@ -56,8 +56,8 @@ jobs:
         if: matrix.platform == 'macos-latest'
         with:
           files: |
-            ${{GITHUB_WORKSPACE}}/src-tauri/target/release/bundle/macos/banco-horas-metal.app
-            ${{GITHUB_WORKSPACE}}/src-tauri/target/release/bundle/dmg/banco-horas-metal_0.0.0_x64.dmg
+            ${{ GITHUB_WORKSPACE }}/src-tauri/target/release/bundle/macos/banco-horas-metal.app
+            ${{ GITHUB_WORKSPACE }}/src-tauri/target/release/bundle/dmg/banco-horas-metal_0.0.0_x64.dmg
       - name: Build (ubuntu only)
         if: matrix.platform == 'ubuntu-latest'
         run: |
@@ -67,9 +67,9 @@ jobs:
         if: matrix.platform == 'macos-latest'
         with:
           files: |
-            ${{GITHUB_WORKSPACE}}/src-tauri/target/release/bundle/deb/banco-horas-metal_0.0.0_amd64.deb
-            ${{GITHUB_WORKSPACE}}/src-tauri/target/release/bundle/rpm/banco-horas-metal-0.0.0-1.x86_64.rpm
-            ${{GITHUB_WORKSPACE}}/src-tauri/target/release/bundle/appimage/banco-horas-metal_0.0.0_amd64.AppImage
+            ${{ GITHUB_WORKSPACE }}/src-tauri/target/release/bundle/deb/banco-horas-metal_0.0.0_amd64.deb
+            ${{ GITHUB_WORKSPACE }}/src-tauri/target/release/bundle/rpm/banco-horas-metal-0.0.0-1.x86_64.rpm
+            ${{ GITHUB_WORKSPACE }}/src-tauri/target/release/bundle/appimage/banco-horas-metal_0.0.0_amd64.AppImage
           
       - name: Build (windows only)
         if: matrix.platform == 'windows-latest'
@@ -80,8 +80,8 @@ jobs:
         if: matrix.platform == 'macos-latest'
         with:
           files: |
-            ${{GITHUB_WORKSPACE}}\src-tauri\target\release\bundle\msi\banco-horas-metal_0.0.0_x64_en-US.msi
-            ${{GITHUB_WORKSPACE}}\src-tauri\target\release\bundle\nsis\banco-horas-metal_0.0.0_x64-setup.exe
+            ${{ GITHUB_WORKSPACE }}\src-tauri\target\release\bundle\msi\banco-horas-metal_0.0.0_x64_en-US.msi
+            ${{ GITHUB_WORKSPACE }}\src-tauri\target\release\bundle\nsis\banco-horas-metal_0.0.0_x64-setup.exe
           
       # - uses: tauri-apps/tauri-action@v0
       #   env:
