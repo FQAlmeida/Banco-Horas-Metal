@@ -92,8 +92,8 @@ jobs:
         with:
           tag_name: Release_${{ steps.extract_version.outputs.version }}
           files: |
-            ${${{ github.workspace }}//\//}/src-tauri/target/release/bundle/msi/banco-horas-metal_0.0.0_x64_en-US.msi
-            ${${{ github.workspace }}//\//}/src-tauri/target/release/bundle/nsis/banco-horas-metal_0.0.0_x64-setup.exe
+            ${github.workspace//\//}/src-tauri/target/release/bundle/msi/banco-horas-metal_0.0.0_x64_en-US.msi
+            ${github.workspace//\//}/src-tauri/target/release/bundle/nsis/banco-horas-metal_0.0.0_x64-setup.exe
           
       # - uses: tauri-apps/tauri-action@v0
       #   env:
