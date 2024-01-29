@@ -92,14 +92,14 @@ jobs:
             /Users/runner/work/Banco-Horas-Metal/Banco-Horas-Metal/src-tauri/target/release/bundle/macos/banco-horas-metal.app
             /Users/runner/work/Banco-Horas-Metal/Banco-Horas-Metal/src-tauri/target/release/bundle/dmg/banco-horas-metal_${{ steps.extract_rust_version.outputs.version }}_x64.dmg
             
-      - name: Build (ubuntu only)
-        if: matrix.platform == 'ubuntu-latest'
-        run: |
-          npm run tauri build --target=x86_64-unknown-linux-gnu
       - name: Build Android (ubuntu only)
         if: matrix.platform == 'ubuntu-latest'
         run: |
           npm run tauri android build
+      - name: Build (ubuntu only)
+        if: matrix.platform == 'ubuntu-latest'
+        run: |
+          npm run tauri build --target=x86_64-unknown-linux-gnu
 
       - name: Create Release (ubuntu only)
         uses: softprops/action-gh-release@v1
