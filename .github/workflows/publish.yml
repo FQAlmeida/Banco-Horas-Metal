@@ -24,9 +24,10 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-      - name: Get version
-        id: package_version
-        uses: KageKirin/get-node-package-version@v0
+
+      - name: Extract version
+        id: extract_version
+        uses: Saionaro/extract-package-version@v1.2.1
 
       - name: install Rust stable
         uses: dtolnay/rust-toolchain@stable
@@ -63,7 +64,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         if: matrix.platform == 'macos-latest'
         with:
-          tag_name: Release_${{ steps.package_version.version }}
+          tag_name: Release_${{ steps.extract_version.outputs.version }}
           files: |
             ${{ github.workspace }}/src-tauri/target/release/bundle/macos/banco-horas-metal.app
             ${{ github.workspace }}/src-tauri/target/release/bundle/dmg/banco-horas-metal_0.0.0_x64.dmg
@@ -76,7 +77,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         if: matrix.platform == 'ubuntu-latest'
         with:
-          tag_name: Release_${{ steps.package_version.version }}
+          tag_name: Release_${{ steps.extract_version.outputs.version }}
           files: |
             ${{ github.workspace }}/src-tauri/target/release/bundle/deb/banco-horas-metal_0.0.0_amd64.deb
             ${{ github.workspace }}/src-tauri/target/release/bundle/rpm/banco-horas-metal-0.0.0-1.x86_64.rpm
@@ -90,7 +91,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         if: matrix.platform == 'windows-latest'
         with:
-          tag_name: Release_${{ steps.package_version.version }}
+          tag_name: Release_${{ steps.extract_version.outputs.version }}
           files: |
             ${{ github.workspace }}\src-tauri\target\release\bundle\msi\banco-horas-metal_0.0.0_x64_en-US.msi
             ${{ github.workspace }}\src-tauri\target\release\bundle\nsis\banco-horas-metal_0.0.0_x64-setup.exe
