@@ -32,12 +32,12 @@ jobs:
       - name: Set Environment (windows only)
         if : matrix.platform == 'windows-latest'
         run: |
-          echo "BUNDLE_PATH=${github.workspace//\//}/src-tauri/target/release/bundle" >> $GITHUB_ENV
+          echo "BUNDLE_PATH=${GITHUB_WORKSPACE//\//}/src-tauri/target/release/bundle" >> $GITHUB_ENV
 
       - name: Set Environment (only)
         if : matrix.platform != 'windows-latest'
         run: |
-          echo "BUNDLE_PATH=${github.workspace}/src-tauri/target/release/bundle" >> $GITHUB_ENV
+          echo "BUNDLE_PATH=${GITHUB_WORKSPACE}/src-tauri/target/release/bundle" >> $GITHUB_ENV
 
       - name: install Rust stable
         uses: dtolnay/rust-toolchain@stable
