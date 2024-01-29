@@ -69,8 +69,8 @@ jobs:
         with:
           tag_name: Release_${{ steps.extract_version.outputs.version }}
           files: |
-            ${{ env.BUNDLE_PATH }}/macos/banco-horas-metal.app
-            ${{ env.BUNDLE_PATH }}/dmg/banco-horas-metal_0.0.0_x64.dmg
+            ${{ BUNDLE_PATH }}/macos/banco-horas-metal.app
+            ${{ BUNDLE_PATH }}/dmg/banco-horas-metal_0.0.0_x64.dmg
             
       - name: Build (ubuntu only)
         if: matrix.platform == 'ubuntu-latest'
@@ -82,9 +82,9 @@ jobs:
         with:
           tag_name: Release_${{ steps.extract_version.outputs.version }}
           files: |
-            ${{ env.BUNDLE_PATH }}/deb/banco-horas-metal_0.0.0_amd64.deb
-            ${{ env.BUNDLE_PATH }}/rpm/banco-horas-metal-0.0.0-1.x86_64.rpm
-            ${{ env.BUNDLE_PATH }}/appimage/banco-horas-metal_0.0.0_amd64.AppImage
+            ${{ BUNDLE_PATH }}/deb/banco-horas-metal_0.0.0_amd64.deb
+            ${{ BUNDLE_PATH }}/rpm/banco-horas-metal-0.0.0-1.x86_64.rpm
+            ${{ BUNDLE_PATH }}/appimage/banco-horas-metal_0.0.0_amd64.AppImage
           
       - name: Build (windows only)
         if: matrix.platform == 'windows-latest'
@@ -96,8 +96,8 @@ jobs:
         with:
           tag_name: Release_${{ steps.extract_version.outputs.version }}
           files: |
-            ${{ env.BUNDLE_PATH }}/msi/banco-horas-metal_0.0.0_x64_en-US.msi
-            ${{ env.BUNDLE_PATH }}/nsis/banco-horas-metal_0.0.0_x64-setup.exe
+            ${{ BUNDLE_PATH }}/msi/banco-horas-metal_0.0.0_x64_en-US.msi
+            ${{ BUNDLE_PATH }}/nsis/banco-horas-metal_0.0.0_x64-setup.exe
           
       # - uses: tauri-apps/tauri-action@v0
       #   env:
