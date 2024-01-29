@@ -60,6 +60,7 @@ jobs:
           cache: 'gradle'
 
       - name: Setup Android SDK
+        if: matrix.platform == 'ubuntu-latest'
         uses: android-actions/setup-android@v3
         with:
           packages: 'tools platform-tools command-line-tools plataforms'
@@ -68,13 +69,6 @@ jobs:
         run: |
           sdkmanager "ndk;25.0.8775105"
           sdkmanager "build-tools"
-
-      - name: Set up NDK
-        id: setup-ndk
-        if: matrix.platform == 'ubuntu-latest'
-        uses: nttld/setup-ndk@v1
-        with:
-          ndk-version: r25c
       - name: Set up NDK home environment variable
         if: matrix.platform == 'ubuntu-latest'
         run: |
