@@ -69,7 +69,7 @@ jobs:
           npm run tauri build --target=x86_64-unknown-linux-gnu
       - name: Create Release (ubuntu only)
         uses: softprops/action-gh-release@v1
-        if: matrix.platform == 'macos-latest'
+        if: matrix.platform == 'ubuntu-latest'
         with:
           tag_name: "Release_${{ steps.package_version.version }}"
           files: |
@@ -83,7 +83,7 @@ jobs:
           npm run tauri build --target=x86_64-pc-windows-msvc
       - name: Create Release (windows only)
         uses: softprops/action-gh-release@v1
-        if: matrix.platform == 'macos-latest'
+        if: matrix.platform == 'windows-latest'
         with:
           tag_name: "Release_${{ steps.package_version.version }}"
           files: |
