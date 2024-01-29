@@ -51,17 +51,38 @@ jobs:
         if: matrix.platform == 'macos-latest'
         run: |
           npm run tauri build --target=universal-apple-darwin
-          
+      - name: Create Release (macos only)
+        uses: softprops/action-gh-release@v1
+        if: matrix.platform == 'macos-latest'
+        with:
+          files: |
+            /Users/runner/work/Banco-Horas-Metal/Banco-Horas-Metal/src-tauri/target/release/bundle/macos/banco-horas-metal.app
+            /Users/runner/work/Banco-Horas-Metal/Banco-Horas-Metal/src-tauri/target/release/bundle/dmg/banco-horas-metal_0.0.0_x64.dmg
       - name: Build (ubuntu only)
         if: matrix.platform == 'ubuntu-latest'
         run: |
           npm run tauri build --target=x86_64-unknown-linux-gnu
+      - name: Create Release (ubuntu only)
+        uses: softprops/action-gh-release@v1
+        if: matrix.platform == 'macos-latest'
+        with:
+          files: |
+            /home/runner/work/Banco-Horas-Metal/Banco-Horas-Metal/src-tauri/target/release/bundle/deb/banco-horas-metal_0.0.0_amd64.deb
+            /home/runner/work/Banco-Horas-Metal/Banco-Horas-Metal/src-tauri/target/release/bundle/rpm/banco-horas-metal-0.0.0-1.x86_64.rpm
+            /home/runner/work/Banco-Horas-Metal/Banco-Horas-Metal/src-tauri/target/release/bundle/appimage/banco-horas-metal_0.0.0_amd64.AppImage
           
       - name: Build (windows only)
         if: matrix.platform == 'windows-latest'
         run: |
           npm run tauri build --target=x86_64-pc-windows-msvc
-
+      - name: Create Release (windows only)
+        uses: softprops/action-gh-release@v1
+        if: matrix.platform == 'macos-latest'
+        with:
+          files: |
+            D:\a\Banco-Horas-Metal\Banco-Horas-Metal\src-tauri\target\release\bundle\msi\banco-horas-metal_0.0.0_x64_en-US.msi
+            D:\a\Banco-Horas-Metal\Banco-Horas-Metal\src-tauri\target\release\bundle\nsis\banco-horas-metal_0.0.0_x64-setup.exe
+          
       # - uses: tauri-apps/tauri-action@v0
       #   env:
       #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
