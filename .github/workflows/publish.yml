@@ -66,14 +66,22 @@ jobs:
           packages: 'tools platform-tools'
       - name: Install NDK
         if: matrix.platform == 'ubuntu-latest'
-        run: |
-          sdkmanager "ndk;25.0.8775105"
-          sdkmanager "cmdline-tools;latest"
-          sdkmanager "build-tools;34.0.0"
-      - name: Set up NDK home environment variable
+        run: sdkmanager "ndk;25.0.8775105"
+      - name: Install Cmdline Tools
+        if: matrix.platform == 'ubuntu-latest'
+        run: sdkmanager "cmdline-tools;latest"
+      - name: Install Build Tools
+        if: matrix.platform == 'ubuntu-latest'
+        run: sdkmanager "build-tools;34.0.0"
+        
+      - name: Set up Android home environment variable
         if: matrix.platform == 'ubuntu-latest'
         run: |
           echo "ANDROID_HOME="$HOME/.android/sdk" >> $GITHUB_ENV
+        
+      - name: Set up NDK home environment variable
+        if: matrix.platform == 'ubuntu-latest'
+        run: |
           echo "NDK_HOME="$ANDROID_HOME/ndk/25.0.8775105" >> $GITHUB_ENV
 
       - name: install dependencies (ubuntu only)
