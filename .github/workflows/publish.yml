@@ -29,9 +29,15 @@ jobs:
         id: extract_version
         uses: Saionaro/extract-package-version@v1.2.1
       
-      - name: Set Environment
+      - name: Set Environment (windows only)
+        if : matrix.platform == 'windows-latest'
         run: |
-          echo "BUNDLE_PATH=${github.workspace//\\//}/src-tauri/target/release/bundle" >> $GITHUB_ENV
+          echo "BUNDLE_PATH=${github.workspace//\//}/src-tauri/target/release/bundle" >> $GITHUB_ENV
+
+      - name: Set Environment (only)
+        if : matrix.platform != 'windows-latest'
+        run: |
+          echo "BUNDLE_PATH=${github.workspace}/src-tauri/target/release/bundle" >> $GITHUB_ENV
 
       - name: install Rust stable
         uses: dtolnay/rust-toolchain@stable
@@ -69,8 +75,8 @@ jobs:
         with:
           tag_name: Release_${{ steps.extract_version.outputs.version }}
           files: |
-            ${{ BUNDLE_PATH }}/macos/banco-horas-metal.app
-            ${{ BUNDLE_PATH }}/dmg/banco-horas-metal_0.0.0_x64.dmg
+            ${{ env.BUNDLE_PATH }}/macos/banco-horas-metal.app
+            ${{ env.BUNDLE_PATH }}/dmg/banco-horas-metal_0.0.0_x64.dmg
             
       - name: Build (ubuntu only)
         if: matrix.platform == 'ubuntu-latest'
@@ -82,9 +88,9 @@ jobs:
         with:
           tag_name: Release_${{ steps.extract_version.outputs.version }}
           files: |
-            ${{ BUNDLE_PATH }}/deb/banco-horas-metal_0.0.0_amd64.deb
-            ${{ BUNDLE_PATH }}/rpm/banco-horas-metal-0.0.0-1.x86_64.rpm
-            ${{ BUNDLE_PATH }}/appimage/banco-horas-metal_0.0.0_amd64.AppImage
+            ${{ env.BUNDLE_PATH }}/deb/banco-horas-metal_0.0.0_amd64.deb
+            ${{ env.BUNDLE_PATH }}/rpm/banco-horas-metal-0.0.0-1.x86_64.rpm
+            ${{ env.BUNDLE_PATH }}/appimage/banco-horas-metal_0.0.0_amd64.AppImage
           
       - name: Build (windows only)
         if: matrix.platform == 'windows-latest'
@@ -96,8 +102,8 @@ jobs:
         with:
           tag_name: Release_${{ steps.extract_version.outputs.version }}
           files: |
-            ${{ BUNDLE_PATH }}/msi/banco-horas-metal_0.0.0_x64_en-US.msi
-            ${{ BUNDLE_PATH }}/nsis/banco-horas-metal_0.0.0_x64-setup.exe
+            ${{ env.BUNDLE_PATH }}/msi/banco-horas-metal_0.0.0_x64_en-US.msi
+            ${{ env.BUNDLE_PATH }}/nsis/banco-horas-metal_0.0.0_x64-setup.exe
           
       # - uses: tauri-apps/tauri-action@v0
       #   env:
