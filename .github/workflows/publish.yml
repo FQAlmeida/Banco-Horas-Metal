@@ -116,6 +116,7 @@ jobs:
       - name: Build Android (ubuntu only)
         if: matrix.platform == 'ubuntu-latest'
         run: |
+          npm run tauri android init
           npm run tauri android build
       - name: Build (ubuntu only)
         if: matrix.platform == 'ubuntu-latest'
