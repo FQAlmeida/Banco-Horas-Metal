@@ -62,7 +62,7 @@ jobs:
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
         with:
-          packages: 'tools platform-tools ndk build-tools command-line-tools plataforms'
+          packages: 'tools platform-tools build-tools command-line-tools plataforms'
       - name: Install NDK
         if: matrix.platform == 'ubuntu-latest'
         run: sdkmanager "ndk;25.0.8775105"
