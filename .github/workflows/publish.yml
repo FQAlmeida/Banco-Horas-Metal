@@ -55,7 +55,7 @@ jobs:
         if: matrix.platform == 'ubuntu-latest'
         uses: actions/setup-java@v4
         with:
-          java-version: 1.8
+          java-version: 18
           distribution: 'oracle'
           cache: 'gradle'
 
