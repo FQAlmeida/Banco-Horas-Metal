@@ -134,6 +134,7 @@ jobs:
             /home/runner/work/Banco-Horas-Metal/Banco-Horas-Metal/src-tauri/target/release/bundle/appimage/banco-horas-metal_${{ steps.extract_rust_version.outputs.version }}_amd64.AppImage
             /home/runner/work/Banco-Horas-Metal/Banco-Horas-Metal/src-tauri/gen/android/app/build/outputs/apk/universal/release/app-universal-release-unsigned.apk
             /home/runner/work/Banco-Horas-Metal/Banco-Horas-Metal/src-tauri/gen/android/app/build/outputs/bundle/universalRelease/app-universal-release.aab
+      
       - name: Build (windows only)
         if: matrix.platform == 'windows-latest'
         run: |
