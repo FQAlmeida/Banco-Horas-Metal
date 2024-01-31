@@ -2,9 +2,6 @@ import { derived, writable } from "svelte/store";
 import type { HourRange } from "../models/Config";
 
 export const hour_range_start = writable<string>("07:00");
-hour_range_start.subscribe((value) => {
-    console.log(value);
-});
 
 export const hour_range_end = writable<string>("17:00");
 

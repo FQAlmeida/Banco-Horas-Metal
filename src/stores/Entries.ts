@@ -106,8 +106,6 @@ export const historical_entries_summaries = derived([historical_entries, checkpo
                 start: e, end: $checkpoints.at(i + 1) || e, infos: hist_entries
                     .filter(
                         (entry) => {
-                            console.log(entry, e, $checkpoints.at(i + 1) || e);
-
                             return entry.started_at >= e.checkpoint &&
                                 entry.started_at <= ($checkpoints.at(i + 1) || e).checkpoint;
                         })
@@ -115,8 +113,6 @@ export const historical_entries_summaries = derived([historical_entries, checkpo
             };
         })
         .map((e) => {
-            console.log(e);
-
             return e.infos
                 .reduce((acc, cur) => {
                     return {
@@ -142,7 +138,6 @@ export const historical_entries_summaries = derived([historical_entries, checkpo
                     }
                 } as HistoricalEntryInfo);
         });
-    console.log(summaries);
     return summaries;
 
 });
