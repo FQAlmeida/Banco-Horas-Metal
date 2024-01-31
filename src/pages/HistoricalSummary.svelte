@@ -1,55 +1,24 @@
 <script lang="ts">
-    import { type EntryInfo } from "../models/Entry";
+    import { Spinner } from "flowbite-svelte";
+    import { historical_entries_summaries } from "../stores/Entries";
+    import HistoricalSummary from "../components/HistoricalSummary.svelte";
 
-    let entryInfos: EntryInfo[] = [
-        {
-            normal: 8,
-            extra: { extra_50: 2, extra_100: 3 },
-            valor_normal: 10,
-            valor_extra: 15,
-        },
-        {
-            normal: 7,
-            extra: { extra_50: 1, extra_100: 4 },
-            valor_normal: 10,
-            valor_extra: 15,
-        },
-        {
-            normal: 6,
-            extra: { extra_50: 1, extra_100: 1 },
-            valor_normal: 10,
-            valor_extra: 15,
-        },
-    ];
+    $: entry_infos = historical_entries_summaries;
 </script>
 
-<main>
-    <h1 class="text-2xl font-bold mb-4">Historical Summary</h1>
-
-    {#each entryInfos as entryInfo, index}
-        <div class="bg-gray-100 rounded p-4 mb-4">
-            <h2 class="text-xl font-bold mb-2">Entry Info {index + 1}</h2>
-            <p class="mb-2">Normal Hours: {entryInfo.normal}</p>
-            <p class="mb-2">
-                Extra Hours: {entryInfo.extra.extra_50}
-                {entryInfo.extra.extra_100}
-            </p>
-            <p class="mb-2">
-                Normal Value: {Intl.NumberFormat("pt-BR", {
-                    style: "currency",
-                    currency: "BRL",
-                }).format(entryInfo.valor_normal)}
-            </p>
-            <p class="mb-2">
-                Extra Value: {Intl.NumberFormat("pt-BR", {
-                    style: "currency",
-                    currency: "BRL",
-                }).format(entryInfo.valor_extra)}
-            </p>
+{#await $entry_infos}
+    <div class="text-center">
+        <Spinner />
+    </div>
+{:then entry_infos}
+    <main class="mt-6">
+        <h1 class="text-5xl font-bold mb-4 text-center mb-8">
+            Resumos Históricos
+        </h1>
+        <div class="flex flex-col flex-grow gap-6">
+            {#each entry_infos as entry_info}
+                <HistoricalSummary summary={entry_info} />
+            {/each}
         </div>
-    {/each}
-</main>
-
-<style>
-    /* Add your custom styles here */
-</style>
+    </main>
+{/await}

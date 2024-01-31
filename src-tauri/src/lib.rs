@@ -8,7 +8,9 @@ mod persistence;
 use controllers::checkpoint::{
     delete_checkpoint, get_checkpoints, insert_checkpoint, update_checkpoint,
 };
-use controllers::register::{delete_entry, get_entries, insert_entry, update_entry};
+use controllers::register::{
+    delete_entry, get_entries, get_historical_entries, insert_entry, update_entry,
+};
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub async fn run() -> Result<()> {
@@ -19,6 +21,7 @@ pub async fn run() -> Result<()> {
         .plugin(tauri_plugin_shell::init())
         .invoke_handler(tauri::generate_handler![
             get_entries,
+            get_historical_entries,
             insert_entry,
             update_entry,
             delete_entry,

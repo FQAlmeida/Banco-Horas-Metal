@@ -23,6 +23,33 @@ pub async fn get_entries(entered_at: DateTime<Utc>) -> Result<Vec<register::Mode
 }
 
 #[tauri::command]
+pub async fn get_historical_entries(
+    checkpoint: DateTime<Utc>,
+) -> Result<Vec<register::Model>, String> {
+    let connection = Database::connect("sqlite://data.db?mode=rwc").await;
+    if let Err(c) = connection {
+        return Err(c.to_string());
+    }
+    let registers = get_registers_before_date(&connection.unwrap(), checkpoint).await;
+    if let Err(c) = registers {
+        return Err(c.to_string());
+    }
+    Ok(registers.unwrap())
+}
+
+async fn get_registers_before_date(
+    connection: &DbConn,
+    checkpoint: DateTime<Utc>,
+) -> Result<Vec<register::Model>> {
+    let query = Register::find()
+        .filter(register::Column::StartedAt.lte(checkpoint))
+        .order_by_asc(register::Column::StartedAt);
+
+    let result = query.all(connection).await?;
+    Ok(result)
+}
+
+#[tauri::command]
 pub async fn insert_entry(entry: RegisterData) -> Result<register::Model, String> {
     let connection = Database::connect("sqlite://data.db?mode=rwc").await;
     if let Err(c) = connection {

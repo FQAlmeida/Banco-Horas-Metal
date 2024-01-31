@@ -1,10 +1,10 @@
 import { DateTime } from "luxon";
-import type { Entry, EntryInfo } from "../models/Entry";
-import { derived, get, writable } from "svelte/store";
+import type { Entry, EntryInfo, HistoricalEntryInfo } from "../models/Entry";
+import { derived, get, readable, writable } from "svelte/store";
 import { calculate_entry_info } from "../lib/calc_info/calc_info";
 import { hour_range, price_hour } from "./Configs";
 import { invoke } from "@tauri-apps/api/core";
-import { last_checkpoint } from "./Checkpoints";
+import { checkpoints, last_checkpoint } from "./Checkpoints";
 
 type EntryDataTransfer = Omit<Entry, "started_at" | "exited_at"> & { started_at: string, exited_at: string; };
 
@@ -82,4 +82,67 @@ export const summary = derived([entries, price_hour, hour_range], ([$entries, $p
             valor_extra: 0,
             valor_normal: 0,
         });
+});
+
+const load_historical_entries_from_database = async (last_checkpoint: DateTime) => {
+    const historical_entries: EntryDataTransfer[] = await invoke(
+        "get_historical_entries", { checkpoint: last_checkpoint });
+    return historical_entries.sort((a, b) => a.register - b.register).map((entry) => ({
+        register: entry.register,
+        started_at: DateTime.fromISO(entry.started_at),
+        exited_at: DateTime.fromISO(entry.exited_at)
+    })) as Entry[];
+};
+
+const historical_entries = derived([last_checkpoint], async ([$last_checkpoint]) => {
+    return await load_historical_entries_from_database($last_checkpoint.checkpoint);
+});
+
+export const historical_entries_summaries = derived([historical_entries, checkpoints, price_hour, hour_range], async ([$historical_entries, $checkpoints, $price_hour, $hour_range]) => {
+    let hist_entries = await $historical_entries;
+    const summaries = $checkpoints.slice(0, -1).map(
+        (e, i) => {
+            return {
+                start: e, end: $checkpoints.at(i + 1) || e, infos: hist_entries
+                    .filter(
+                        (entry) => {
+                            console.log(entry, e, $checkpoints.at(i + 1) || e);
+
+                            return entry.started_at >= e.checkpoint &&
+                                entry.started_at <= ($checkpoints.at(i + 1) || e).checkpoint;
+                        })
+                    .map((e) => calculate_entry_info(e, $price_hour, $hour_range))
+            };
+        })
+        .map((e) => {
+            console.log(e);
+
+            return e.infos
+                .reduce((acc, cur) => {
+                    return {
+                        ...acc, info: {
+                            normal: acc.info.normal + cur.normal,
+                            extra: {
+                                extra_50: acc.info.extra.extra_50 + cur.extra.extra_50,
+                                extra_100: acc.info.extra.extra_100 + cur.extra.extra_100,
+                            },
+                            valor_extra: acc.info.valor_extra + cur.valor_extra,
+                            valor_normal: acc.info.valor_normal + cur.valor_normal,
+                        }
+                    };
+                }, {
+                    start: e.start, end: e.end, info: {
+                        normal: 0,
+                        extra: {
+                            extra_50: 0,
+                            extra_100: 0,
+                        },
+                        valor_extra: 0,
+                        valor_normal: 0,
+                    }
+                } as HistoricalEntryInfo);
+        });
+    console.log(summaries);
+    return summaries;
+
 });

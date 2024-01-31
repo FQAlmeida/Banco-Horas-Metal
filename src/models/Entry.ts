@@ -1,4 +1,5 @@
 import type { DateTime } from "luxon";
+import type { Checkpoint } from "./Checkpoint";
 
 export interface Entry {
     register: number,
@@ -11,4 +12,10 @@ export interface EntryInfo {
     extra: { extra_50: number, extra_100: number; },
     valor_normal: number,
     valor_extra: number,
+}
+
+export interface HistoricalEntryInfo {
+    start: Checkpoint,
+    end: Checkpoint,
+    info: EntryInfo,
 }

@@ -8,10 +8,11 @@ type CheckpointDataTransfer = Omit<Checkpoint, "checkpoint"> & { checkpoint: str
 const load_checkpoint_from_database = async () => {
     const checkpoints: CheckpointDataTransfer[] = await invoke(
         "get_checkpoints");
-    return checkpoints.map(
+    const checkpoints_mapped = checkpoints.map(
         e => { return { checkpoint: DateTime.fromISO(e.checkpoint) }; }).sort(
             (a, b) => a.checkpoint.toMillis() - b.checkpoint.toMillis()
         ) as Checkpoint[];
+    return [{ id: -1, checkpoint: DateTime.fromMillis(0) } as Checkpoint, ...checkpoints_mapped];
 };
 const create_checkpoint_store = async () => {
     const { subscribe, set, update } = writable<Checkpoint[]>((
