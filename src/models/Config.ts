@@ -7,4 +7,5 @@ export interface Config {
     id: number,
     hour_range: HourRange,
     price_hour: number;
+    state: string;
 }

@@ -8,7 +8,6 @@ type ConfigDataTransfer = Omit<Config, "hour_range"> & { start_time: string, end
 const load_config_from_database = async (): Promise<Config> => {
     const config: ConfigDataTransfer = await invoke(
         "get_configuration");
-
     return {
         ...config,
         hour_range: {
@@ -31,6 +30,14 @@ const create_system_config = async () => {
             };
         });
     };
+    const update_state = (new_state: string) => {
+        update((old_config) => {
+            return {
+                ...old_config,
+                state: new_state
+            };
+        });
+    };
 
     const update_price_hour = (new_price_hour: number) => {
         update((old_config) => {
@@ -46,7 +53,8 @@ const create_system_config = async () => {
             configuration: {
                 start_time: new_config.hour_range.start,
                 end_time: new_config.hour_range.end,
-                price_hour: new_config.price_hour
+                price_hour: new_config.price_hour,
+                state: new_config.state,
             }
         };
         invoke("update_configuration", payload).catch((e) => {
@@ -59,6 +67,7 @@ const create_system_config = async () => {
         update,
         update_hour_range,
         update_price_hour,
+        update_state,
         reset,
     };
 };
@@ -78,7 +87,12 @@ hour_range.subscribe((new_hour_range) => {
     system_config.update_hour_range(new_hour_range);
 });
 
-export const price_hour = writable<number>(24.03);
+export const price_hour = writable<number>(get(system_config).price_hour);
 price_hour.subscribe((new_price_hour) => {
     system_config.update_price_hour(new_price_hour);
+});
+
+export const state = writable<string>(get(system_config).state);
+state.subscribe((new_state) => {
+    system_config.update_state(new_state);
 });

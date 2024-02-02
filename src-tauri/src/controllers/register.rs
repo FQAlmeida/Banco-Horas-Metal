@@ -44,11 +44,11 @@ async fn get_registers_before_date(
     checkpoint: DateTime<Utc>,
 ) -> Result<Vec<register::Model>> {
     let query = Register::find()
-        .filter(register::Column::StartedAt.lte(dbg!(checkpoint.add(chrono::Duration::seconds(1)))))
+        .filter(register::Column::StartedAt.lte(checkpoint.add(chrono::Duration::seconds(1))))
         .order_by_asc(register::Column::StartedAt);
 
     let result = query.all(connection).await?;
-    Ok(dbg!(result))
+    Ok(result)
 }
 
 #[tauri::command]

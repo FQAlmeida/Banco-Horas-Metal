@@ -104,7 +104,7 @@ export const historical_entries_summaries = derived(
     async ([$historical_entries, $checkpoints]) => {
         const hist_entries = await $historical_entries;
         if ($checkpoints.length < 2) { return []; }
-        
+
         const summaries = $checkpoints.slice(0, -1).map(
             (e, i) => {
                 const next_checkpoint = $checkpoints.at(i + 1) ?? e;
@@ -150,8 +150,6 @@ export const historical_entries_summaries = derived(
                         }
                     });
             });
-            console.log(summaries);
-            
         return summaries;
 
     });

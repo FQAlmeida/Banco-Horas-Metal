@@ -1,29 +1,53 @@
 <script lang="ts">
-    import { Input, Label } from "flowbite-svelte";
-    import Navbar from "../components/Navbar/Navbar.svelte";
+    import { Input, Label, P, Select } from "flowbite-svelte";
 
-    import { hour_range_start, price_hour } from "../stores/Configs";
+    import { hour_range_start, price_hour, state } from "../stores/Configs";
     import { hour_range_end } from "../stores/Configs";
     import CurrencyInput from "@canutin/svelte-currency-input";
+    import Holidays from "date-holidays";
+    const holidays = new Holidays("BR");
+    const states_data = holidays.getStates("BR");
+    const items = Object.keys(states_data).map((state) => {
+        const region_data = holidays.getRegions("BR", state) ?? {};
+        return {
+            value: state,
+            name: states_data[state],
+            regions: Object.keys(region_data).map((region) => {
+                return {
+                    value: region,
+                    name: region_data[region],
+                };
+            }),
+        };
+    });
 </script>
 
-<div class="container mx-auto px-4">
-    <Label for="hour_start" class="mb-2">Hora Entrada</Label>
-    <Input
-        type="time"
-        id="hour_start"
-        placeholder="07:00"
-        required
-        bind:value={$hour_range_start}
-    />
-    <Label for="hour_end" class="mb-2">Hora Saida</Label>
-    <Input
-        type="time"
-        id="hour_end"
-        placeholder="17:00"
-        required
-        bind:value={$hour_range_end}
-    />
+<div
+    class="container mx-auto px-4 flex flex-col gap-2 align-center justify-content"
+>
+    <P class="text-4xl font-bold mb-4 text-center">Configurações</P>
+    <div class="flex flex-row flex-grow gap-4 flex-1">
+        <div class="flex-grow">
+            <Label for="hour_start" class="mb-2">Hora Entrada</Label>
+            <Input
+                type="time"
+                id="hour_start"
+                placeholder="07:00"
+                required
+                bind:value={$hour_range_start}
+            />
+        </div>
+        <div class="flex-grow">
+            <Label for="hour_end" class="mb-2">Hora Saida</Label>
+            <Input
+                type="time"
+                id="hour_end"
+                placeholder="17:00"
+                required
+                bind:value={$hour_range_end}
+            />
+        </div>
+    </div>
     <Label for="price_hour" class="mb-2">Valor Hora</Label>
     <CurrencyInput
         name="price_hour"
@@ -44,4 +68,6 @@
         isNegativeAllowed={false}
         required
     />
+    <Label for="state" class="mb-2">Estado</Label>
+    <Select id="state" required {items} bind:value={$state} />
 </div>

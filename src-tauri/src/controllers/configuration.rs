@@ -35,11 +35,12 @@ pub async fn update_configuration(
     Ok(configuration.unwrap())
 }
 
-#[derive(Debug, Clone, Copy, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ConfigurationData {
     pub start_time: NaiveTime,
     pub end_time: NaiveTime,
     pub price_hour: f64,
+    pub state: String,
 }
 
 async fn insert_configuration(
@@ -50,6 +51,7 @@ async fn insert_configuration(
         start_time: Set(configuration_data.start_time),
         end_time: Set(configuration_data.end_time),
         price_hour: Set(configuration_data.price_hour),
+        state: Set(configuration_data.state),
         ..Default::default()
     };
     let result = configuration.save(connection).await?;
@@ -64,6 +66,7 @@ async fn _get_configuration(connection: &DbConn) -> Result<configuration::Model>
             start_time: NaiveTime::from_hms_opt(7, 0, 0).unwrap(),
             end_time: NaiveTime::from_hms_opt(17, 0, 0).unwrap(),
             price_hour: 23.04,
+            state: String::from("SP"),
         };
         let config = insert_configuration(connection, default_configuration).await?;
         return Ok(config);
@@ -81,6 +84,7 @@ async fn _update_configuration(
         price_hour: Set(configuration.price_hour),
         start_time: Set(configuration.start_time),
         end_time: Set(configuration.end_time),
+        state: Set(configuration.state),
         ..Default::default()
     };
     let result = configuration.update(connection).await?;
@@ -116,6 +120,7 @@ mod tests {
             start_time: NaiveTime::from_hms_opt(8, 0, 0).unwrap(),
             end_time: NaiveTime::from_hms_opt(17, 0, 0).unwrap(),
             price_hour: 10.0,
+            state: String::from("SP"),
         };
 
         let result = insert_configuration(&connection, configuration_data).await;

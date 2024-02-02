@@ -1,6 +1,9 @@
 import { DateTime, type WeekdayNumbers } from "luxon";
 import type { HourRange } from "../../models/Config";
 import type { Entry, EntryInfo } from "../../models/Entry";
+import Holidays from "date-holidays";
+import { get } from "svelte/store";
+import { state } from "../../stores/Configs";
 
 type ActiveEntry = Omit<Entry, "register">;
 
@@ -75,7 +78,7 @@ function get_entries_per_day(entry: ActiveEntry, hour_range: HourRange) {
     const luxon_saturday_number: WeekdayNumbers = 6;
     let extra_50 = extra;
     let extra_100 = 0;
-    if (normal_time_start.weekday == luxon_sunday_number) {
+    if (normal_time_start.weekday == luxon_sunday_number || is_brazilian_holiday(normal_time_start)) {
         extra_100 = extra + normal;
         extra_50 = 0;
         normal = 0;
@@ -110,3 +113,10 @@ export function calculate_entry_info(
         valor_normal: valor_normal
     };
 }
+
+function is_brazilian_holiday(normal_time_start: DateTime): boolean {
+    const hd = new Holidays("BR", get(state));
+    const is_holiday = hd.isHoliday(normal_time_start.toJSDate());
+    return is_holiday != false;
+}
+

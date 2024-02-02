@@ -108,7 +108,6 @@
             color="red"
             class="me-2 mt-2"
             on:click={async () => {
-                console.log(entry_index, temp_entry);
                 return await entries.update_entry(entry_index, temp_entry);
             }}
         >

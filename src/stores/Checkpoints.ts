@@ -23,8 +23,6 @@ const load_checkpoint_from_database = async () => {
         }).sort(
             (a, b) => a.checkpoint.toMillis() - b.checkpoint.toMillis()
         );
-    console.log(checkpoints_mapped);
-
     return [
         { id: -1, checkpoint: DateTime.fromMillis(0), price_hour: 0, hour_range: { start: "", end: "" } },
         ...checkpoints_mapped];

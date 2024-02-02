@@ -12,13 +12,17 @@
     </div>
 {:then entry_infos}
     <main class="mt-6">
-        <P class="text-5xl font-bold mb-4 text-center mb-8">
+        <P class="text-4xl font-bold mb-4 text-center mb-8">
             Resumos Históricos
         </P>
-        <div class="flex flex-col flex-grow gap-6">
-            {#each entry_infos as entry_info}
-                <HistoricalSummary summary={entry_info} />
-            {/each}
-        </div>
+        {#if entry_infos.length === 0}
+            <P class="text-center">Nenhum resumo disponível</P>
+        {:else}
+            <div class="flex flex-col flex-grow gap-6">
+                {#each entry_infos as entry_info}
+                    <HistoricalSummary summary={entry_info} />
+                {/each}
+            </div>
+        {/if}
     </main>
 {/await}

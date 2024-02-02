@@ -16,6 +16,7 @@
     "@tauri-apps/api": "^2.0.0-alpha.13",
     "@tauri-apps/plugin-shell": "^2.0.0-alpha.3",
     "brazilianholiday": "^2.0.5",
+    "date-holidays": "^3.23.7",
     "flowbite-svelte-blocks": "^1.1.0",
     "flowbite-svelte-icons": "^1.0.2",
     "luxon": "^3.4.4",

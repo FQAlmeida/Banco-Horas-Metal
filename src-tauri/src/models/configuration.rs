@@ -14,6 +14,7 @@ pub struct Model {
     pub start_time: NaiveTime,
     pub end_time: NaiveTime,
     pub price_hour: f64,
+    pub state: String,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
