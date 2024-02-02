@@ -87,6 +87,7 @@ export const summary = derived([entries, price_hour, hour_range], ([$entries, $p
 const load_historical_entries_from_database = async (last_checkpoint: DateTime) => {
     const historical_entries: EntryDataTransfer[] = await invoke(
         "get_historical_entries", { checkpoint: last_checkpoint });
+
     return historical_entries.sort((a, b) => a.register - b.register).map((entry) => ({
         register: entry.register,
         started_at: DateTime.fromISO(entry.started_at),
@@ -102,6 +103,8 @@ export const historical_entries_summaries = derived(
     [historical_entries, checkpoints],
     async ([$historical_entries, $checkpoints]) => {
         const hist_entries = await $historical_entries;
+        if ($checkpoints.length < 2) { return []; }
+        
         const summaries = $checkpoints.slice(0, -1).map(
             (e, i) => {
                 const next_checkpoint = $checkpoints.at(i + 1) ?? e;
@@ -147,6 +150,8 @@ export const historical_entries_summaries = derived(
                         }
                     });
             });
+            console.log(summaries);
+            
         return summaries;
 
     });

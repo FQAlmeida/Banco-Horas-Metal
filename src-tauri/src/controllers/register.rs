@@ -1,3 +1,5 @@
+use std::ops::Add;
+
 use crate::models::register;
 use anyhow::Result;
 use chrono::{DateTime, Utc};
@@ -42,11 +44,11 @@ async fn get_registers_before_date(
     checkpoint: DateTime<Utc>,
 ) -> Result<Vec<register::Model>> {
     let query = Register::find()
-        .filter(register::Column::StartedAt.lte(checkpoint))
+        .filter(register::Column::StartedAt.lte(dbg!(checkpoint.add(chrono::Duration::seconds(1)))))
         .order_by_asc(register::Column::StartedAt);
 
     let result = query.all(connection).await?;
-    Ok(result)
+    Ok(dbg!(result))
 }
 
 #[tauri::command]

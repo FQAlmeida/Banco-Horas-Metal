@@ -12,10 +12,19 @@ type CheckpointDataTransfer = Omit<Checkpoint, "checkpoint" | "hour_range"> & {
 const load_checkpoint_from_database = async () => {
     const checkpoints: CheckpointDataTransfer[] = await invoke(
         "get_checkpoints");
+
     const checkpoints_mapped = checkpoints.map(
-        e => { return { checkpoint: DateTime.fromISO(e.checkpoint) }; }).sort(
+        e => {
+            return {
+                checkpoint: DateTime.fromISO(e.checkpoint),
+                id: e.id,
+                price_hour: e.price_hour, hour_range: { start: e.start_time, end: e.start_time }
+            };
+        }).sort(
             (a, b) => a.checkpoint.toMillis() - b.checkpoint.toMillis()
-        ) as Checkpoint[];
+        );
+    console.log(checkpoints_mapped);
+
     return [
         { id: -1, checkpoint: DateTime.fromMillis(0), price_hour: 0, hour_range: { start: "", end: "" } },
         ...checkpoints_mapped];
@@ -52,9 +61,9 @@ const create_checkpoint_store = async () => {
                 parsed_checkpoints
             ].sort((a, b) => a.checkpoint.toMillis() - b.checkpoint.toMillis()));
         },
-        remove_checkpoint: async (checkpoint: Checkpoint) => {
-            await invoke("delete_checkpoint", { checkpoint: checkpoint });
-            update((old_checkpoints) => old_checkpoints.filter((e) => e.checkpoint != checkpoint.checkpoint));
+        remove_checkpoint: async (id: number) => {
+            await invoke("delete_checkpoint", { checkpointId:id });
+            update((old_checkpoints) => old_checkpoints.filter((e) => e.id != id));
         },
         update_checkpoint: async (old_checkpoint: Checkpoint, new_checkpoint: Omit<Checkpoint, "id">) => {
             const result: CheckpointDataTransfer = await invoke(

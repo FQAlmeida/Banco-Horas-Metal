@@ -29,7 +29,6 @@
 
     $: modal_delete_open = false;
     $: modal_update_open = false;
-    $: modal_update_confirm_open = false;
 
     let actual_entry_delete_index: number = 0;
     let actual_entry_update_index: number = 0;
