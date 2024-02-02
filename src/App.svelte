@@ -4,7 +4,7 @@
   import Navbar from "./components/Navbar/Navbar.svelte";
 </script>
 
-<body class="bg-white dark:bg-gray-800 min-h-screen">
+<body class="bg-white dark:bg-gray-800 min-h-screen pb-8">
   <Navbar />
   <div class="container auto-mx px-4">
     <Router {routes} />
