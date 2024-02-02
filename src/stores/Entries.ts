@@ -1,6 +1,6 @@
 import { DateTime } from "luxon";
 import type { Entry, EntryInfo, HistoricalEntryInfo } from "../models/Entry";
-import { derived, get, readable, writable } from "svelte/store";
+import { derived, get, writable } from "svelte/store";
 import { calculate_entry_info } from "../lib/calc_info/calc_info";
 import { hour_range, price_hour } from "./Configs";
 import { invoke } from "@tauri-apps/api/core";
@@ -98,46 +98,55 @@ const historical_entries = derived([last_checkpoint], async ([$last_checkpoint])
     return await load_historical_entries_from_database($last_checkpoint.checkpoint);
 });
 
-export const historical_entries_summaries = derived([historical_entries, checkpoints, price_hour, hour_range], async ([$historical_entries, $checkpoints, $price_hour, $hour_range]) => {
-    let hist_entries = await $historical_entries;
-    const summaries = $checkpoints.slice(0, -1).map(
-        (e, i) => {
-            return {
-                start: e, end: $checkpoints.at(i + 1) || e, infos: hist_entries
-                    .filter(
-                        (entry) => {
-                            return entry.started_at >= e.checkpoint &&
-                                entry.started_at <= ($checkpoints.at(i + 1) || e).checkpoint;
-                        })
-                    .map((e) => calculate_entry_info(e, $price_hour, $hour_range))
-            };
-        })
-        .map((e) => {
-            return e.infos
-                .reduce((acc, cur) => {
-                    return {
-                        ...acc, info: {
-                            normal: acc.info.normal + cur.normal,
+export const historical_entries_summaries = derived(
+    [historical_entries, checkpoints],
+    async ([$historical_entries, $checkpoints]) => {
+        const hist_entries = await $historical_entries;
+        const summaries = $checkpoints.slice(0, -1).map(
+            (e, i) => {
+                const next_checkpoint = $checkpoints.at(i + 1) ?? e;
+                return {
+                    start: e,
+                    end: next_checkpoint,
+                    price_hour: next_checkpoint.price_hour,
+                    hour_range: next_checkpoint.hour_range,
+                    infos: hist_entries
+                        .filter(
+                            (entry) => {
+                                return entry.started_at >= e.checkpoint &&
+                                    entry.started_at <= ($checkpoints.at(i + 1) ?? e).checkpoint;
+                            })
+                        .map((e) => calculate_entry_info(
+                            e, next_checkpoint.price_hour, next_checkpoint.hour_range))
+                };
+            })
+            .map((e) => {
+                return e.infos
+                    .reduce<HistoricalEntryInfo>((acc, cur) => {
+                        return {
+                            ...acc, info: {
+                                normal: acc.info.normal + cur.normal,
+                                extra: {
+                                    extra_50: acc.info.extra.extra_50 + cur.extra.extra_50,
+                                    extra_100: acc.info.extra.extra_100 + cur.extra.extra_100,
+                                },
+                                valor_extra: acc.info.valor_extra + cur.valor_extra,
+                                valor_normal: acc.info.valor_normal + cur.valor_normal,
+                            }
+                        };
+                    }, {
+                        price_hour: e.price_hour, hour_range: e.hour_range,
+                        start: e.start, end: e.end, info: {
+                            normal: 0,
                             extra: {
-                                extra_50: acc.info.extra.extra_50 + cur.extra.extra_50,
-                                extra_100: acc.info.extra.extra_100 + cur.extra.extra_100,
+                                extra_50: 0,
+                                extra_100: 0,
                             },
-                            valor_extra: acc.info.valor_extra + cur.valor_extra,
-                            valor_normal: acc.info.valor_normal + cur.valor_normal,
+                            valor_extra: 0,
+                            valor_normal: 0,
                         }
-                    };
-                }, {
-                    start: e.start, end: e.end, info: {
-                        normal: 0,
-                        extra: {
-                            extra_50: 0,
-                            extra_100: 0,
-                        },
-                        valor_extra: 0,
-                        valor_normal: 0,
-                    }
-                } as HistoricalEntryInfo);
-        });
-    return summaries;
+                    });
+            });
+        return summaries;
 
-});
+    });

@@ -5,6 +5,7 @@
     import { checkpoints } from "../stores/Checkpoints";
     import type { Checkpoint } from "../models/Checkpoint";
     import { entries } from "../stores/Entries";
+    import { hour_range, price_hour } from "../stores/Configs";
     let modal_datetime_open = false;
     let datetime_str: string = DateTime.now().toFormat("yyyy-MM-dd'T'HH:mm");
 
@@ -12,7 +13,9 @@
 
     $: checkpoint = {
         checkpoint: datetime,
-    } as Checkpoint;
+        price_hour: $price_hour,
+        hour_range: $hour_range,
+    };
 
     let modal_open = false;
 </script>

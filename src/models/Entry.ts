@@ -1,5 +1,6 @@
 import type { DateTime } from "luxon";
 import type { Checkpoint } from "./Checkpoint";
+import type { HourRange } from "./Config";
 
 export interface Entry {
     register: number,
@@ -17,5 +18,7 @@ export interface EntryInfo {
 export interface HistoricalEntryInfo {
     start: Checkpoint,
     end: Checkpoint,
+    price_hour: number,
+    hour_range: HourRange,
     info: EntryInfo,
 }

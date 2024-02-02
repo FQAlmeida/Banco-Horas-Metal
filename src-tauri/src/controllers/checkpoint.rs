@@ -1,6 +1,6 @@
 use crate::models::checkpoint;
 use anyhow::Result;
-use chrono::{DateTime, Utc};
+use chrono::{DateTime, NaiveTime, Utc};
 use sea_orm::{
     ActiveModelTrait, Database, DbConn, DeleteResult, EntityTrait, ModelTrait, QueryOrder, Set,
     TryIntoModel,
@@ -69,6 +69,9 @@ pub async fn delete_checkpoint(checkpoint_id: u32) -> Result<u64, String> {
 #[derive(Debug, Clone, Copy, Serialize, Deserialize)]
 pub struct CheckpointData {
     pub checkpoint: DateTime<Utc>,
+    pub price_hour: f64,
+    pub start_time: NaiveTime,
+    pub end_time: NaiveTime,
 }
 
 async fn _insert_checkpoint(
@@ -77,6 +80,9 @@ async fn _insert_checkpoint(
 ) -> Result<checkpoint::Model> {
     let register = checkpoint::ActiveModel {
         checkpoint: Set(checkpoint_data.checkpoint),
+        price_hour: Set(checkpoint_data.price_hour),
+        start_time: Set(checkpoint_data.start_time),
+        end_time: Set(checkpoint_data.end_time),
         ..Default::default()
     };
     let result = register.save(connection).await?;
@@ -92,6 +98,9 @@ async fn _update_checkpoint(
     let checkpoint = checkpoint::ActiveModel {
         id: Set(checkpoint_id),
         checkpoint: Set(checkpoint_data.checkpoint),
+        price_hour: Set(checkpoint_data.price_hour),
+        start_time: Set(checkpoint_data.start_time),
+        end_time: Set(checkpoint_data.end_time),
         ..Default::default()
     };
     let result = checkpoint.update(connection).await?;
@@ -134,6 +143,9 @@ mod tests {
 
         let checkpoint_data = CheckpointData {
             checkpoint: Utc::now(),
+            price_hour: 10.0,
+            start_time: NaiveTime::from_hms_opt(8, 0, 0).unwrap(),
+            end_time: NaiveTime::from_hms_opt(17, 0, 0).unwrap(),
         };
 
         let result = _insert_checkpoint(&connection, checkpoint_data).await;

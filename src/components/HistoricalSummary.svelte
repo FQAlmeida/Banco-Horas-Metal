@@ -9,9 +9,17 @@
     <Card horizontal size="xl" class="w-full">
         <div class="container auto-mx flex flex-col gap-6 mb-8">
             <div class="flex flex-col items-center justify-content">
-                <P class="text-2xl font-bold">Resumo do Período</P>
-                <dd class="font-light text-gray-500 dark:text-gray-400">
-                    Até {summary.end.checkpoint.toLocaleString(DateTime.DATE_FULL)}
+                <P class="text-3xl font-bold">Resumo do Período</P>
+                <dd class="font-light text-xl text-gray-500 dark:text-gray-400">
+                    Até {summary.end.checkpoint.toLocaleString(
+                        DateTime.DATE_FULL,
+                    )}
+                </dd>
+                <dd class="font-light text-md text-gray-500 dark:text-gray-400">
+                    Valor Hora: {new Intl.NumberFormat("pt-BR", {
+                        style: "currency",
+                        currency: "BRL",
+                    }).format(summary.price_hour)}
                 </dd>
             </div>
             <div

@@ -72,11 +72,15 @@ function get_entries_per_day(entry: ActiveEntry, hour_range: HourRange) {
     const extra = extra_early + extra_late;
 
     const luxon_sunday_number: WeekdayNumbers = 7;
+    const luxon_saturday_number: WeekdayNumbers = 6;
     let extra_50 = extra;
     let extra_100 = 0;
     if (normal_time_start.weekday == luxon_sunday_number) {
         extra_100 = extra + normal;
         extra_50 = 0;
+        normal = 0;
+    } else if (normal_time_start.weekday == luxon_saturday_number) {
+        extra_50 = extra + normal;
         normal = 0;
     }
 

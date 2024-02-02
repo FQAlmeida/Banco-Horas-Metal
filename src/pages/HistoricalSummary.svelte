@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { Spinner } from "flowbite-svelte";
+    import { P, Spinner } from "flowbite-svelte";
     import { historical_entries_summaries } from "../stores/Entries";
     import HistoricalSummary from "../components/HistoricalSummary.svelte";
 
@@ -12,9 +12,9 @@
     </div>
 {:then entry_infos}
     <main class="mt-6">
-        <h1 class="text-5xl font-bold mb-4 text-center mb-8">
+        <P class="text-5xl font-bold mb-4 text-center mb-8">
             Resumos Históricos
-        </h1>
+        </P>
         <div class="flex flex-col flex-grow gap-6">
             {#each entry_infos as entry_info}
                 <HistoricalSummary summary={entry_info} />
