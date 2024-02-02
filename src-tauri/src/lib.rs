@@ -8,6 +8,7 @@ mod persistence;
 use controllers::checkpoint::{
     delete_checkpoint, get_checkpoints, insert_checkpoint, update_checkpoint,
 };
+use controllers::configuration::{get_configuration, update_configuration};
 use controllers::register::{
     delete_entry, get_entries, get_historical_entries, insert_entry, update_entry,
 };
@@ -28,7 +29,9 @@ pub async fn run() -> Result<()> {
             get_checkpoints,
             insert_checkpoint,
             update_checkpoint,
-            delete_checkpoint
+            delete_checkpoint,
+            get_configuration,
+            update_configuration,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
