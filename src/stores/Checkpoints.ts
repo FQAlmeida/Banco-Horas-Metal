@@ -32,11 +32,11 @@ const create_checkpoint_store = async () => {
         add_checkpoint: async (new_checkpoint: Omit<Checkpoint, "id">) => {
             const result: CheckpointDataTransfer = await invoke(
                 "insert_checkpoint", {
-                    checkpointData: {
-                        ...new_checkpoint,
-                        start_time: new_checkpoint.hour_range.start, 
-                        end_time: new_checkpoint.hour_range.end,
-                    }
+                checkpointData: {
+                    ...new_checkpoint,
+                    start_time: new_checkpoint.hour_range.start,
+                    end_time: new_checkpoint.hour_range.end,
+                }
             });
             const parsed_checkpoints: Checkpoint = {
                 id: result.id,
@@ -59,7 +59,17 @@ const create_checkpoint_store = async () => {
         update_checkpoint: async (old_checkpoint: Checkpoint, new_checkpoint: Omit<Checkpoint, "id">) => {
             const result: CheckpointDataTransfer = await invoke(
                 "update_checkpoint",
-                { old_checkpoint: old_checkpoint, new_checkpoint: new_checkpoint });
+                {
+                    oldCheckpoint: {
+                        ...old_checkpoint,
+                        start_time: old_checkpoint.hour_range.start,
+                        end_time: old_checkpoint.hour_range.end,
+                    }, newCheckpoint: {
+                        ...new_checkpoint,
+                        start_time: new_checkpoint.hour_range.start,
+                        end_time: new_checkpoint.hour_range.end,
+                    }
+                });
             const parsed_checkpoint: Checkpoint = {
                 id: result.id,
                 price_hour: result.price_hour,
