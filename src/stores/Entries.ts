@@ -150,6 +150,6 @@ export const historical_entries_summaries = derived(
                         }
                     });
             });
-        return summaries;
+        return summaries.sort((a, b) => b.end.checkpoint.toMillis() - a.end.checkpoint.toMillis());
 
     });
