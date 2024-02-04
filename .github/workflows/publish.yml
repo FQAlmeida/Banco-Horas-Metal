@@ -118,6 +118,29 @@ jobs:
           rm -rf src-tauri/gen
           npm run tauri android init
           npm run tauri android build
+          
+      - uses: r0adkll/sign-android-release@v1
+        if: matrix.platform == 'ubuntu-latest'
+        name: Sign app APK
+        # ID used to access action output
+        id: sign_app
+        with:
+          releaseDirectory: src-tauri/gen/android/app/build/outputs/apk/universal/release
+          signingKeyBase64: ${{ secrets.SIGNING_KEY }}
+          alias: ${{ secrets.ALIAS }}
+          keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
+          keyPassword: ${{ secrets.KEY_STORE_PASSWORD }}
+        env:
+          # override default build-tools version (29.0.3) -- optional
+          BUILD_TOOLS_VERSION: "34.0.0"
+      
+        # Example use of `signedReleaseFile` output -- not needed
+      - uses: actions/upload-artifact@v2
+        if: matrix.platform == 'ubuntu-latest'
+        with:
+          name: Signed app bundle
+          path: ${{steps.sign_app.outputs.signedReleaseFile}}
+
       - name: Build (ubuntu only)
         if: matrix.platform == 'ubuntu-latest'
         run: |
