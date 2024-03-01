@@ -117,6 +117,10 @@ export function calculate_entry_info(
 function is_brazilian_holiday(normal_time_start: DateTime): boolean {
     const hd = new Holidays("BR", get(state));
     const is_holiday = hd.isHoliday(normal_time_start.toJSDate());
-    return is_holiday != false;
+    if (is_holiday !== false) {
+        return is_holiday[0].type === "public";
+    }
+    return false;
 }
+
 
