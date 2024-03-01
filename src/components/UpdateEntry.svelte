@@ -15,12 +15,16 @@
     const [hour_end, minute_end] = $hour_range.end.split(":").map((aux) => {
         return parseInt(aux);
     });
-    let datetime_start_str: string = (
-        $entries.at(entry_index)?.started_at ||
+    console.log($entries, $entries.at(entry_index), entry_index);
+
+    $: datetime_start_str = (
+        $entries.at($entries.findIndex((e) => e.register === entry_index))
+            ?.started_at ||
         DateTime.now().set({ hour: hour_start, minute: minute_start })
     ).toFormat("yyyy-MM-dd'T'HH:mm");
-    let datetime_end_str: string = (
-        $entries.at(entry_index)?.exited_at ||
+    $: datetime_end_str = (
+        $entries.at($entries.findIndex((e) => e.register === entry_index))
+            ?.exited_at ||
         DateTime.now().set({ hour: hour_end, minute: minute_end })
     ).toFormat("yyyy-MM-dd'T'HH:mm");
 
