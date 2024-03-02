@@ -15,7 +15,6 @@
     const [hour_end, minute_end] = $hour_range.end.split(":").map((aux) => {
         return parseInt(aux);
     });
-    console.log($entries, $entries.at(entry_index), entry_index);
 
     $: datetime_start_str = (
         $entries.at($entries.findIndex((e) => e.register === entry_index))

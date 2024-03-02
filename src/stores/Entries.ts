@@ -11,11 +11,11 @@ type EntryDataTransfer = Omit<Entry, "started_at" | "exited_at"> & { started_at:
 const load_entries_from_database = async () => {
     const entries: EntryDataTransfer[] = await invoke(
         "get_entries", { enteredAt: get(last_checkpoint).checkpoint });
-    return entries.sort((a, b) => a.register - b.register).map((entry) => ({
+    return entries.map((entry) => ({
         register: entry.register,
         started_at: DateTime.fromISO(entry.started_at),
         exited_at: DateTime.fromISO(entry.exited_at)
-    })) as Entry[];
+    })).sort((a, b) => a.started_at.toMillis() - b.started_at.toMillis()) as Entry[];
 };
 const create_entries_store = async () => {
     const { subscribe, set, update } = writable<Entry[]>((
@@ -36,7 +36,7 @@ const create_entries_store = async () => {
             update((old_entries) => [
                 ...old_entries,
                 parsed_entry
-            ].sort((a, b) => a.register - b.register));
+            ].sort((a, b) => a.started_at.toMillis() - b.started_at.toMillis()));
         },
         remove_entry: async (index: number) => {
             await invoke("delete_entry", { id: index });
@@ -51,7 +51,7 @@ const create_entries_store = async () => {
             };
             update((old_entries) => old_entries.map(
                 (entry) => entry.register != index ? entry : parsed_entry
-            ).sort((a, b) => a.register - b.register));
+            ).sort((a, b) => a.started_at.toMillis() - b.started_at.toMillis()));
         },
         reload: async () => {
             set(await load_entries_from_database());
@@ -88,11 +88,11 @@ const load_historical_entries_from_database = async (last_checkpoint: DateTime) 
     const historical_entries: EntryDataTransfer[] = await invoke(
         "get_historical_entries", { checkpoint: last_checkpoint });
 
-    return historical_entries.sort((a, b) => a.register - b.register).map((entry) => ({
+    return historical_entries.map((entry) => ({
         register: entry.register,
         started_at: DateTime.fromISO(entry.started_at),
         exited_at: DateTime.fromISO(entry.exited_at)
-    })) as Entry[];
+    })).sort((a, b) => a.started_at.toMillis() - b.started_at.toMillis()) as Entry[];
 };
 
 const historical_entries = derived([last_checkpoint], async ([$last_checkpoint]) => {

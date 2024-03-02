@@ -18,7 +18,7 @@ const load_checkpoint_from_database = async () => {
             return {
                 checkpoint: DateTime.fromISO(e.checkpoint),
                 id: e.id,
-                price_hour: e.price_hour, hour_range: { start: e.start_time, end: e.start_time }
+                price_hour: e.price_hour, hour_range: { start: e.start_time, end: e.end_time }
             };
         }).sort(
             (a, b) => a.checkpoint.toMillis() - b.checkpoint.toMillis()
@@ -60,7 +60,7 @@ const create_checkpoint_store = async () => {
             ].sort((a, b) => a.checkpoint.toMillis() - b.checkpoint.toMillis()));
         },
         remove_checkpoint: async (id: number) => {
-            await invoke("delete_checkpoint", { checkpointId:id });
+            await invoke("delete_checkpoint", { checkpointId: id });
             update((old_checkpoints) => old_checkpoints.filter((e) => e.id != id));
         },
         update_checkpoint: async (old_checkpoint: Checkpoint, new_checkpoint: Omit<Checkpoint, "id">) => {
