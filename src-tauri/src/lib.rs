@@ -16,6 +16,8 @@ use controllers::register::{
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub async fn run() -> Result<()> {
     let connection = Database::connect("sqlite://data.db?mode=rwc").await?;
+
+    // TODO(Otavio): use https://github.com/tauri-apps/tauri-plugin-sql
     setup_db(&connection).await?;
 
     tauri::Builder::default()
