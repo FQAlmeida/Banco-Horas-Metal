@@ -3,7 +3,7 @@ export interface HourRange {
     end: string;
 }
 
-export interface Config {
+export interface ConfigData {
     id: number,
     hour_range: HourRange,
     price_hour: number;

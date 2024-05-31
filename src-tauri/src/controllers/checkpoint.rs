@@ -1,4 +1,4 @@
-use crate::models::checkpoint;
+use crate::{consts::database::DATABASE_URL, models::checkpoint};
 use anyhow::Result;
 use chrono::{DateTime, NaiveTime, Utc};
 use sea_orm::{
@@ -9,9 +9,9 @@ use serde::{Deserialize, Serialize};
 
 use crate::models::checkpoint::Entity as Checkpoint;
 
-#[tauri::command]
+#[tauri::command(async)]
 pub async fn get_checkpoints() -> Result<Vec<checkpoint::Model>, String> {
-    let connection = Database::connect("sqlite://data.db?mode=rwc").await;
+    let connection = Database::connect(DATABASE_URL.clone()).await;
     if let Err(c) = connection {
         return Err(c.to_string());
     }
@@ -22,11 +22,11 @@ pub async fn get_checkpoints() -> Result<Vec<checkpoint::Model>, String> {
     Ok(registers.unwrap())
 }
 
-#[tauri::command]
+#[tauri::command(async)]
 pub async fn insert_checkpoint(
     checkpoint_data: CheckpointData,
 ) -> Result<checkpoint::Model, String> {
-    let connection = Database::connect("sqlite://data.db?mode=rwc").await;
+    let connection = Database::connect(DATABASE_URL.clone()).await;
     if let Err(c) = connection {
         return Err(c.to_string());
     }
@@ -37,12 +37,12 @@ pub async fn insert_checkpoint(
     Ok(result.unwrap())
 }
 
-#[tauri::command]
+#[tauri::command(async)]
 pub async fn update_checkpoint(
     id: u32,
     new_checkpoint_data: CheckpointData,
 ) -> Result<checkpoint::Model, String> {
-    let connection = Database::connect("sqlite://data.db?mode=rwc").await;
+    let connection = Database::connect(DATABASE_URL.clone()).await;
     if let Err(c) = connection {
         return Err(c.to_string());
     }
@@ -53,9 +53,9 @@ pub async fn update_checkpoint(
     Ok(result.unwrap())
 }
 
-#[tauri::command]
+#[tauri::command(async)]
 pub async fn delete_checkpoint(checkpoint_id: u32) -> Result<u64, String> {
-    let connection = Database::connect("sqlite://data.db?mode=rwc").await;
+    let connection = Database::connect(DATABASE_URL.clone()).await;
     if let Err(c) = connection {
         return Err(c.to_string());
     }
@@ -135,7 +135,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_insert_checkpoint() -> Result<()> {
-        let connection = Database::connect("sqlite://data.db?mode=rwc")
+        let connection = Database::connect(DATABASE_URL.clone())
             .await
             .unwrap();
 

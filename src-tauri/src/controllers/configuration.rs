@@ -1,4 +1,4 @@
-use crate::models::configuration;
+use crate::{consts::database::DATABASE_URL, models::configuration};
 use anyhow::Result;
 use chrono::NaiveTime;
 use sea_orm::{ActiveModelTrait, Database, DbConn, EntityTrait, Set, TryIntoModel};
@@ -6,9 +6,9 @@ use serde::{Deserialize, Serialize};
 
 use crate::models::configuration::Entity as Configuration;
 
-#[tauri::command]
+#[tauri::command(async)]
 pub async fn get_configuration() -> Result<configuration::Model, String> {
-    let connection = Database::connect("sqlite://data.db?mode=rwc").await;
+    let connection = Database::connect(DATABASE_URL.clone()).await;
     if let Err(c) = connection {
         return Err(c.to_string());
     }
@@ -19,12 +19,12 @@ pub async fn get_configuration() -> Result<configuration::Model, String> {
     Ok(configuration.unwrap())
 }
 
-#[tauri::command]
+#[tauri::command(async)]
 pub async fn update_configuration(
     id: u32,
     configuration: ConfigurationData,
 ) -> Result<configuration::Model, String> {
-    let connection = Database::connect("sqlite://data.db?mode=rwc").await;
+    let connection = Database::connect(DATABASE_URL.clone()).await;
     if let Err(c) = connection {
         return Err(c.to_string());
     }
@@ -110,7 +110,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_insert_configuration() -> Result<()> {
-        let connection = Database::connect("sqlite://data.db?mode=rwc")
+        let connection = Database::connect(DATABASE_URL.clone())
             .await
             .unwrap();
 

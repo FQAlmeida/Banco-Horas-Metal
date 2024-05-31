@@ -1,12 +1,12 @@
 import { derived, get, writable } from "svelte/store";
-import type { Config, HourRange } from "../models/Config";
+import type { ConfigData, HourRange } from "../models/Config";
 import { invoke } from "@tauri-apps/api/core";
 
-type ConfigDataTransfer = Omit<Config, "hour_range"> & { start_time: string, end_time: string; };
+type ConfigPayload = ConfigData & { start_time: string, end_time: string; };
 
 
-const load_config_from_database = async (): Promise<Config> => {
-    const config: ConfigDataTransfer = await invoke(
+const load_config_from_database = async (): Promise<ConfigData> => {
+    const config: ConfigPayload = await invoke(
         "get_configuration");
     return {
         ...config,

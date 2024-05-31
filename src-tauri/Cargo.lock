@@ -196,6 +196,7 @@ version = "0.0.1"
 dependencies = [
  "anyhow",
  "chrono",
+ "lazy_static",
  "sea-orm",
  "serde",
  "serde_json",

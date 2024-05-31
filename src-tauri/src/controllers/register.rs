@@ -1,6 +1,6 @@
 use std::ops::Add;
 
-use crate::models::register;
+use crate::{consts::database::DATABASE_URL, models::register};
 use anyhow::Result;
 use chrono::{DateTime, Utc};
 use sea_orm::{
@@ -11,9 +11,9 @@ use serde::{Deserialize, Serialize};
 
 use crate::models::register::Entity as Register;
 
-#[tauri::command]
+#[tauri::command(async)]
 pub async fn get_entries(entered_at: DateTime<Utc>) -> Result<Vec<register::Model>, String> {
-    let connection = Database::connect("sqlite://data.db?mode=rwc").await;
+    let connection = Database::connect(DATABASE_URL.clone()).await;
     if let Err(c) = connection {
         return Err(c.to_string());
     }
@@ -24,11 +24,11 @@ pub async fn get_entries(entered_at: DateTime<Utc>) -> Result<Vec<register::Mode
     Ok(registers.unwrap())
 }
 
-#[tauri::command]
+#[tauri::command(async)]
 pub async fn get_historical_entries(
     checkpoint: DateTime<Utc>,
 ) -> Result<Vec<register::Model>, String> {
-    let connection = Database::connect("sqlite://data.db?mode=rwc").await;
+    let connection = Database::connect(DATABASE_URL.clone()).await;
     if let Err(c) = connection {
         return Err(c.to_string());
     }
@@ -53,7 +53,7 @@ async fn get_registers_before_date(
 
 #[tauri::command]
 pub async fn insert_entry(entry: RegisterData) -> Result<register::Model, String> {
-    let connection = Database::connect("sqlite://data.db?mode=rwc").await;
+    let connection = Database::connect(DATABASE_URL.clone()).await;
     if let Err(c) = connection {
         return Err(c.to_string());
     }
@@ -66,7 +66,7 @@ pub async fn insert_entry(entry: RegisterData) -> Result<register::Model, String
 
 #[tauri::command]
 pub async fn update_entry(id: u32, entry: RegisterData) -> Result<register::Model, String> {
-    let connection = Database::connect("sqlite://data.db?mode=rwc").await;
+    let connection = Database::connect(DATABASE_URL.clone()).await;
     if let Err(c) = connection {
         return Err(c.to_string());
     }
@@ -79,7 +79,7 @@ pub async fn update_entry(id: u32, entry: RegisterData) -> Result<register::Mode
 
 #[tauri::command]
 pub async fn delete_entry(id: u32) -> Result<u64, String> {
-    let connection = Database::connect("sqlite://data.db?mode=rwc").await;
+    let connection = Database::connect(DATABASE_URL.clone()).await;
     if let Err(c) = connection {
         return Err(c.to_string());
     }
@@ -155,9 +155,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_insert_register() -> Result<()> {
-        let connection = Database::connect("sqlite://data.db?mode=rwc")
-            .await
-            .unwrap();
+        let connection = Database::connect(DATABASE_URL.clone()).await.unwrap();
 
         setup_db(&connection).await?;
 

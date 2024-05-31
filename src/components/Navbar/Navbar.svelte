@@ -4,7 +4,6 @@
         NavBrand,
         NavHamburger,
         NavUl,
-        NavLi,
         DarkMode,
     } from "flowbite-svelte";
     import { link } from "svelte-spa-router";

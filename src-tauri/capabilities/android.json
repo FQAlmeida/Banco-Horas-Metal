@@ -1,0 +1,33 @@
+{
+    "$schema": "../gen/schemas/android-schema.json",
+    "identifier": "android-capability",
+    "description": "Capability for the main window",
+    "windows": [
+        "main"
+    ],
+    "platforms": [
+        "android"
+    ],
+    "permissions": [
+        "path:default",
+        "sql:allow-load",
+        "sql:allow-close",
+        "sql:allow-execute",
+        "sql:allow-select",
+        "path:allow-basename",
+        "path:allow-dirname",
+        "path:allow-extname",
+        "path:allow-is-absolute",
+        "path:allow-join",
+        "path:allow-normalize",
+        "path:allow-resolve",
+        "path:allow-resolve-directory",
+        "event:default",
+        "window:default",
+        "app:default",
+        "resources:default",
+        "menu:default",
+        "tray:default",
+        "window:allow-set-title"
+    ]
+}
