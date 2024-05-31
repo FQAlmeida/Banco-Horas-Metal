@@ -1,4 +1,3 @@
-use anyhow::Result;
 use persistence::sqlite_manager::setup_db;
 use sea_orm::Database;
 mod controllers;
@@ -14,14 +13,36 @@ use controllers::register::{
 };
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
-pub async fn run() -> Result<()> {
-    let connection = Database::connect("sqlite://data.db?mode=rwc").await?;
+pub fn run() {
+    let runtime = tokio::runtime::Builder::new_multi_thread()
+        .worker_threads(1)
+        .enable_all()
+        .build()
+        .unwrap();
+    let connection = runtime
+        .block_on(runtime.spawn(async {
+            use anyhow::Ok;
+            tokio::fs::create_dir_all("databases").await?;
+            let _ = tokio::fs::File::create("databases/data.db").await?;
+            tokio::fs::remove_file("databases/data.db").await?;
+            let db = Database::connect("sqlite://databases/data.db?mode=rwc").await?;
+            Ok(db)
+        }))
+        .unwrap()
+        .unwrap();
 
-    // TODO(Otavio): use https://github.com/tauri-apps/tauri-plugin-sql
-    setup_db(&connection).await?;
+    runtime
+        .block_on(runtime.spawn(async move {
+            use anyhow::Ok;
+            setup_db(&connection).await?;
+            Ok(())
+        }))
+        .unwrap()
+        .unwrap();
 
     tauri::Builder::default()
         .plugin(tauri_plugin_shell::init())
+        .plugin(tauri_plugin_sql::Builder::default().build())
         .invoke_handler(tauri::generate_handler![
             get_entries,
             get_historical_entries,
@@ -37,7 +58,6 @@ pub async fn run() -> Result<()> {
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
-    Ok(())
 }
 
 #[cfg(test)]

@@ -3,7 +3,6 @@
 
 use anyhow::Result;
 
-#[tokio::main]
-async fn main() -> Result<()> {
-    banco_horas_metal_lib::run().await
+fn main() {
+    banco_horas_metal_lib::run()
 }

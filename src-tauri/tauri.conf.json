@@ -1,43 +1,41 @@
 {
-  "build": {
-    "beforeDevCommand": "npm run dev",
-    "beforeBuildCommand": "npm run build",
-    "devPath": "http://localhost:1420",
-    "distDir": "../dist"
-  },
-  "package": {
-    "productName": "banco-horas-metal",
-    "version": "0.0.1"
-  },
-  "tauri": {
-    "bundle": {
-      "active": true,
-      "targets": "all",
-      "identifier": "banco.horas.metal.fqa.dev",
-      "icon": [
-        "icons/32x32.png",
-        "icons/128x128.png",
-        "icons/128x128@2x.png",
-        "icons/icon.icns",
-        "icons/icon.ico"
-      ]
-    },
+  "app": {
     "security": {
       "csp": null
     },
     "windows": [
       {
         "fullscreen": false,
+        "height": 600,
         "resizable": true,
         "title": "Banco de Horas",
-        "width": 800,
-        "height": 600
+        "width": 800
       }
     ]
   },
+  "build": {
+    "beforeBuildCommand": "npm run build",
+    "beforeDevCommand": "npm run dev",
+    "devUrl": "http://localhost:1420",
+    "frontendDist": "../dist"
+  },
+  "bundle": {
+    "active": true,
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ],
+    "targets": "all"
+  },
+  "identifier": "banco.horas.metal.fqa.dev",
   "plugins": {
     "shell": {
       "open": true
     }
-  }
+  },
+  "productName": "banco-horas-metal",
+  "version": "0.0.1"
 }

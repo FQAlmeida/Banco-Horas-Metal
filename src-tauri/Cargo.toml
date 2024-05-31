@@ -14,11 +14,12 @@ name = "banco_horas_metal_lib"
 crate-type = ["staticlib", "cdylib", "rlib"]
 
 [build-dependencies]
-tauri-build = { version = "2.0.0-alpha", features = [] }
+tauri-build = { version = "2.0.0-beta", features = [] }
 
 [dependencies]
-tauri = { version = "2.0.0-alpha", features = [] }
-tauri-plugin-shell = "2.0.0-alpha"
+tauri = { version = "2.0.0-beta", features = [] }
+tauri-plugin-sql = { version = "2.0.0-beta", features = ["sqlite"] }
+tauri-plugin-shell = { version = "2.0.0-beta", features = [] }
 serde_json = "1.0"
 sea-orm = { version = "0.12", features = [ "sqlx-sqlite", "runtime-tokio-rustls", "macros" ] }
 tokio = { version = "1.35", features = [ "full" ] }
