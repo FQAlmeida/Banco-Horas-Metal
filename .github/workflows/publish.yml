@@ -50,7 +50,10 @@ jobs:
               aarch64-apple-ios 
               x86_64-apple-ios 
               aarch64-apple-ios-sim
-      
+
+      - name: Install Tauri Cargo cli
+        run: cargo install tauri-cli --version "^2.0.0-beta"
+
       - name: Set up our JDK environment (android)
         if: matrix.platform == 'ubuntu-latest'
         uses: actions/setup-java@v4
