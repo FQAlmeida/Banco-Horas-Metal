@@ -3,3 +3,4 @@
 /target/
 
 data.db
+gen/android/keystore.properties

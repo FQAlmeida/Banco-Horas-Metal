@@ -108,7 +108,7 @@ mod tests {
         Ok(result)
     }
 
-    #[tokio::test]
+    #[async_std::test]
     async fn test_insert_configuration() -> Result<()> {
         let connection = Database::connect(DATABASE_URL.clone())
             .await

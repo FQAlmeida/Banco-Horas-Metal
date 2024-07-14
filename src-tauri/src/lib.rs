@@ -4,9 +4,10 @@ mod models;
 mod persistence;
 
 use std::collections::HashMap;
-use std::sync::Mutex;
+use std::sync::{Arc, Mutex};
 
-use consts::database::{DATABASE_FOLDER, DATABASE_PATH, DATABASE_URL};
+use async_std::task;
+use consts::database::{DATABASE_FOLDER, DATABASE_URL};
 use controllers::checkpoint::{
     delete_checkpoint, get_checkpoints, insert_checkpoint, update_checkpoint,
 };
@@ -14,48 +15,53 @@ use controllers::configuration::{get_configuration, update_configuration};
 use controllers::register::{
     delete_entry, get_entries, get_historical_entries, insert_entry, update_entry,
 };
+use log::{error, info};
 use persistence::sqlite_manager::setup_db;
 use sea_orm::Database;
 use tauri::Manager;
 
 #[derive(Default)]
-struct Store(Mutex<HashMap<String, String>>);
+struct Store {
+    state: Arc<Mutex<HashMap<String, String>>>,
+}
 
 fn setup(app: &mut tauri::App) -> std::result::Result<(), Box<dyn std::error::Error>> {
-    let runtime = tokio::runtime::Builder::new_multi_thread()
-        .worker_threads(1)
-        .enable_all()
-        .build()
-        .unwrap();
-    let result = runtime
-        .block_on(runtime.spawn(async {
-            use anyhow::Ok;
-            tokio::fs::create_dir_all(DATABASE_FOLDER).await?;
-            let _ = tokio::fs::File::create(DATABASE_PATH.clone()).await?;
-            tokio::fs::remove_file(DATABASE_PATH.clone()).await?;
-            let connection = Database::connect(DATABASE_URL.clone()).await?;
-            setup_db(&connection).await?;
-            Ok(())
-        }))
-        .expect("Error while joining the setup task");
+    info!("Setting up the database");
+    let result = task::block_on(async {
+        use anyhow::Ok;
+        if async_std::fs::metadata(DATABASE_FOLDER.clone())
+            .await
+            .is_ok()
+        {
+            info!("Creating database folder {}", DATABASE_FOLDER.clone());
+            async_std::fs::create_dir_all(DATABASE_FOLDER.clone()).await?;
+        }
+        let connection = Database::connect(DATABASE_URL.clone()).await?;
+        setup_db(&connection).await?;
+        Ok(connection)
+    });
+    info!("Database connection result: {:?}", &result);
+    info!("Database setup completed");
     if let Err(err) = result {
+        error!("Error setting up the database: {:?}", err);
         app.state::<Store>()
-            .0
+            .state
             .lock()
             .unwrap()
             .insert("STATE".into(), "Error".into());
         app.state::<Store>()
-            .0
+            .state
             .lock()
             .unwrap()
             .insert("MESSAGE".into(), err.to_string());
         return Ok(());
     }
     app.state::<Store>()
-        .0
+        .state
         .lock()
         .unwrap()
         .insert("STATE".into(), "Completed".into());
+    info!("Setup completed");
     Ok(())
 }
 
@@ -66,24 +72,24 @@ struct Payload {
 }
 
 #[tauri::command]
-fn get_setup_state(app: tauri::AppHandle) -> Payload {
-    Payload {
-        state: app
-            .state::<Store>()
-            .0
-            .lock()
-            .unwrap()
-            .get("STATE")
-            .unwrap_or(&String::from("Loading"))
-            .clone(),
-        message: app
-            .state::<Store>()
-            .0
-            .lock()
-            .unwrap()
-            .get("MESSAGE")
-            .cloned(),
-    }
+fn get_setup_state(storage: tauri::State<Store>) -> Payload {
+    info!("Getting setup state");
+    let state = storage
+        .state
+        .lock()
+        .unwrap()
+        .get("STATE")
+        .unwrap_or(&String::from("Loading"))
+        .clone();
+    info!("State: {:?}", state);
+    let message = storage.state.lock().unwrap().get("MESSAGE").cloned();
+    info!("Message: {:?}", message);
+    let payload = Payload {
+        message,
+        state: state.clone(),
+    };
+    info!("Setup state: {:?}", payload);
+    payload
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
@@ -91,6 +97,7 @@ pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_shell::init())
         .plugin(tauri_plugin_sql::Builder::default().build())
+        .plugin(tauri_plugin_log::Builder::default().build())
         .manage(Store::default())
         .setup(setup)
         .invoke_handler(tauri::generate_handler![
@@ -115,7 +122,7 @@ pub fn run() {
 mod tests {
     use super::*;
 
-    #[tokio::test]
+    #[async_std::test]
     async fn test_database_connection() {
         let connection = Database::connect(DATABASE_URL.clone()).await;
         assert!(connection.is_ok());

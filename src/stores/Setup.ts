@@ -7,4 +7,5 @@ export enum SetupState {
     Completed = "Completed"
 }
 
-export const setupCompleted = writable<{ state: SetupState, message?: string; }>({ state: SetupState.NotStarted });
+export const setupCompleted = writable<{ state: SetupState, message?: string; }>(
+    { state: SetupState.NotStarted });

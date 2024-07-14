@@ -133,7 +133,7 @@ mod tests {
 
     use super::*;
 
-    #[tokio::test]
+    #[async_std::test]
     async fn test_insert_checkpoint() -> Result<()> {
         let connection = Database::connect(DATABASE_URL.clone())
             .await

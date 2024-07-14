@@ -1,8 +1,7 @@
 import "./app.pcss";
 import "./styles.css";
 import App from "./App.svelte";
-import { listen } from "@tauri-apps/api/event";
-import { setupCompleted, type SetupState } from "./stores/Setup";
+import { setupCompleted, SetupState } from "./stores/Setup";
 import { invoke } from "@tauri-apps/api/core";
 
 const default_app_div = document.createElement("div");
@@ -19,15 +18,19 @@ const app = new App({
   target,
 });
 
-type Payload = {
+interface Payload {
   state: SetupState;
   message: string;
-};
-setInterval(async () => {
-  let e = await invoke<Payload>("get_setup_state");
+}
+const intervalId = setInterval(async () => {
+  const e = await invoke<Payload>("get_setup_state");
   const payload: Payload = e;
   setupCompleted.set(payload);
+  if (payload.state === SetupState.Completed || payload.state === SetupState.Error) {
+    clearInterval(intervalId);
+  }
 }, 100
 );
+
 
 export default app;

@@ -153,7 +153,7 @@ mod tests {
 
     use super::*;
 
-    #[tokio::test]
+    #[async_std::test]
     async fn test_insert_register() -> Result<()> {
         let connection = Database::connect(DATABASE_URL.clone()).await.unwrap();
 
